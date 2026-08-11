@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatMoney } from "@/lib/money";
 import { siteConfig } from "@/lib/config";
-import { primaryImage, isInStock } from "@/lib/catalogue/queries";
+import { primaryImage, isInStock } from "@/lib/catalogue/helpers";
 import { ProductImagePlaceholder } from "./ProductImagePlaceholder";
 import type { ProductWithDetails } from "@/types/database";
 

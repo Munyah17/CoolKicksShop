@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { siteConfig, siteUrl } from "@/lib/config";
+import { isPaynowMockMode } from "@/lib/paynow";
 import { CartProvider } from "@/lib/cart/context";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -36,6 +37,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
+        {isPaynowMockMode && (
+          <div className="bg-amber-400 py-1.5 text-center text-xs font-semibold uppercase tracking-widest text-amber-950">
+            Test Mode — Payments are simulated, no real Paynow transactions
+          </div>
+        )}
         <CartProvider>
           <SiteHeader />
           <main className="flex-1">{children}</main>

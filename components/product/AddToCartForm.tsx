@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useCart } from "@/lib/cart/context";
-import { sortedSizes } from "@/lib/catalogue/queries";
+import { sortedSizes } from "@/lib/catalogue/helpers";
 import type { ProductWithDetails } from "@/types/database";
 
 export function AddToCartForm({
