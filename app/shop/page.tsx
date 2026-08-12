@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAllActiveProducts } from "@/lib/catalogue/queries";
+import { getAllActiveProducts, getAllCategories } from "@/lib/catalogue/queries";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ShopControls } from "@/components/product/ShopControls";
 import type { ProductWithDetails } from "@/types/database";
@@ -14,13 +14,13 @@ type SortOption = "newest" | "price-asc" | "price-desc" | "featured";
 export default async function ShopPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sort?: string; q?: string }>;
+  searchParams: Promise<{ sort?: string; q?: string; category?: string }>;
 }) {
-  const { sort: rawSort, q } = await searchParams;
+  const { sort: rawSort, q, category } = await searchParams;
   const sort: SortOption = isSortOption(rawSort) ? rawSort : "featured";
 
-  const products = await getAllActiveProducts();
-  const filtered = filterAndSort(products, q, sort);
+  const [products, categories] = await Promise.all([getAllActiveProducts(), getAllCategories()]);
+  const filtered = filterAndSort(products, q, category, sort);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -29,7 +29,7 @@ export default async function ShopPage({
         <p className="text-sm text-muted">{filtered.length} pair{filtered.length === 1 ? "" : "s"}</p>
       </div>
 
-      <ShopControls sort={sort} query={q ?? ""} />
+      <ShopControls sort={sort} query={q ?? ""} category={category ?? ""} categories={categories} />
 
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-24 text-center">
@@ -53,8 +53,17 @@ function isSortOption(value: string | undefined): value is SortOption {
   return value === "newest" || value === "price-asc" || value === "price-desc" || value === "featured";
 }
 
-function filterAndSort(products: ProductWithDetails[], q: string | undefined, sort: SortOption) {
+function filterAndSort(
+  products: ProductWithDetails[],
+  q: string | undefined,
+  category: string | undefined,
+  sort: SortOption
+) {
   let result = products;
+
+  if (category) {
+    result = result.filter((p) => p.category === category);
+  }
 
   if (q) {
     const needle = q.trim().toLowerCase();

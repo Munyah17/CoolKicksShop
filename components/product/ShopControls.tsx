@@ -11,17 +11,29 @@ const sortLabels: Record<string, string> = {
   "price-desc": "Price: High to Low",
 };
 
-export function ShopControls({ sort, query }: { sort: string; query: string }) {
+export function ShopControls({
+  sort,
+  query,
+  category,
+  categories,
+}: {
+  sort: string;
+  query: string;
+  category: string;
+  categories: string[];
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const [q, setQ] = useState(query);
 
-  function updateParams(next: { sort?: string; q?: string }) {
+  function updateParams(next: { sort?: string; q?: string; category?: string }) {
     const params = new URLSearchParams();
     const nextSort = next.sort ?? sort;
     const nextQ = next.q ?? q;
+    const nextCategory = next.category ?? category;
     if (nextSort && nextSort !== "featured") params.set("sort", nextSort);
     if (nextQ) params.set("q", nextQ);
+    if (nextCategory) params.set("category", nextCategory);
     router.push(params.toString() ? `${pathname}?${params.toString()}` : pathname);
   }
 
@@ -45,20 +57,40 @@ export function ShopControls({ sort, query }: { sort: string; query: string }) {
         />
       </form>
 
-      <label className="flex items-center gap-2 text-sm">
-        <span className="text-muted">Sort</span>
-        <select
-          value={sort}
-          onChange={(e) => updateParams({ sort: e.target.value })}
-          className="border border-border bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
-        >
-          {Object.entries(sortLabels).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div className="flex items-center gap-3">
+        {categories.length > 1 && (
+          <label className="flex items-center gap-2 text-sm">
+            <span className="text-muted">Category</span>
+            <select
+              value={category}
+              onChange={(e) => updateParams({ category: e.target.value })}
+              className="border border-border bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
+            >
+              <option value="">All</option>
+              {categories.map((c) => (
+                <option key={c} value={c}>
+                  {c.replace(/(^|\s)\w/g, (ch) => ch.toUpperCase())}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+
+        <label className="flex items-center gap-2 text-sm">
+          <span className="text-muted">Sort</span>
+          <select
+            value={sort}
+            onChange={(e) => updateParams({ sort: e.target.value })}
+            className="border border-border bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
+          >
+            {Object.entries(sortLabels).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
     </div>
   );
 }

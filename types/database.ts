@@ -117,7 +117,7 @@ export interface SettingsRow {
 
 export interface HeroSlideRow {
   id: string;
-  image_url: string;
+  image_url: string | null;
   headline: string | null;
   subheadline: string | null;
   cta_label: string | null;

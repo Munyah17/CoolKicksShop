@@ -18,7 +18,8 @@ export default async function AdminHeroSlidesPage() {
         The homepage hero rotates through up to 5 active slides. Recommended image size:{" "}
         <strong className="text-neutral-900">1920 × 800px</strong> (landscape, ~2.4:1), JPG or
         WEBP, ideally under 300KB. Text/logo elements in the image should stay clear of the
-        outer ~10% on each side so they aren&apos;t cropped on narrow screens.
+        outer ~10% on each side so they aren&apos;t cropped on narrow screens. Leave the image
+        URL blank to show a plain dark background until you have photography ready.
       </p>
 
       <div className="mt-6 space-y-4">
@@ -29,8 +30,8 @@ export default async function AdminHeroSlidesPage() {
             className="space-y-3 border border-border bg-white p-4"
           >
             <label className="block">
-              <span className="text-xs font-medium text-neutral-600">Image URL</span>
-              <input name="imageUrl" defaultValue={slide.image_url} required className="input mt-1" />
+              <span className="text-xs font-medium text-neutral-600">Image URL (optional)</span>
+              <input name="imageUrl" defaultValue={slide.image_url ?? ""} className="input mt-1" />
             </label>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="block">
@@ -77,8 +78,8 @@ export default async function AdminHeroSlidesPage() {
         <h2 className="text-sm font-semibold uppercase tracking-widest text-neutral-900">Add slide</h2>
         <form action={createHeroSlide} className="mt-3 space-y-3 border border-border bg-white p-4">
           <label className="block">
-            <span className="text-xs font-medium text-neutral-600">Image URL</span>
-            <input name="imageUrl" required placeholder="https://…" className="input mt-1" />
+            <span className="text-xs font-medium text-neutral-600">Image URL (optional)</span>
+            <input name="imageUrl" placeholder="https://…" className="input mt-1" />
           </label>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <label className="block">

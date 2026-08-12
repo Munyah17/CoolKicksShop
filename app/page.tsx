@@ -1,15 +1,33 @@
 import Link from "next/link";
 import { siteConfig, whatsappLink } from "@/lib/config";
-import { getFeaturedProducts, getNewArrivals, getActiveHeroSlides } from "@/lib/catalogue/queries";
+import {
+  getFeaturedProducts,
+  getNewArrivals,
+  getActiveHeroSlides,
+  getTopCategories,
+  getProductsByCategory,
+} from "@/lib/catalogue/queries";
 import { ProductCard } from "@/components/product/ProductCard";
 import { HeroSlider } from "@/components/home/HeroSlider";
 
+function categoryTitle(category: string): string {
+  return category.replace(/(^|\s)\w/g, (c) => c.toUpperCase());
+}
+
 export default async function HomePage() {
-  const [newArrivals, featured, heroSlides] = await Promise.all([
+  const [newArrivals, featured, heroSlides, topCategories] = await Promise.all([
     getNewArrivals(4),
     getFeaturedProducts(4),
     getActiveHeroSlides(),
+    getTopCategories(2),
   ]);
+
+  const categorySections = await Promise.all(
+    topCategories.map(async (c) => ({
+      category: c.category,
+      products: await getProductsByCategory(c.category, 4),
+    }))
+  );
 
   return (
     <div>
@@ -41,6 +59,18 @@ export default async function HomePage() {
 
       {featured.length > 0 && (
         <ProductSection title="Featured Kicks" viewAllHref="/shop" products={featured} />
+      )}
+
+      {categorySections.map(
+        ({ category, products }) =>
+          products.length > 0 && (
+            <ProductSection
+              key={category}
+              title={categoryTitle(category)}
+              viewAllHref={`/shop?category=${encodeURIComponent(category)}`}
+              products={products}
+            />
+          )
       )}
 
       <section className="border-y border-border bg-surface">

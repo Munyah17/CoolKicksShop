@@ -60,6 +60,58 @@ export async function getProductBySlug(slug: string): Promise<ProductWithDetails
   return data;
 }
 
+export interface CategorySummary {
+  category: string;
+  count: number;
+}
+
+// Categories are free-text on the product row (see types/database.ts), so
+// "top categories" is computed here rather than via a lookup table.
+export async function getTopCategories(limit = 2): Promise<CategorySummary[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("products")
+    .select("category")
+    .eq("active", true)
+    .returns<{ category: string }[]>();
+
+  const counts = new Map<string, number>();
+  for (const { category } of data ?? []) {
+    counts.set(category, (counts.get(category) ?? 0) + 1);
+  }
+
+  return [...counts.entries()]
+    .map(([category, count]) => ({ category, count }))
+    .sort((a, b) => b.count - a.count || a.category.localeCompare(b.category))
+    .slice(0, limit);
+}
+
+export async function getAllCategories(): Promise<string[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("products")
+    .select("category")
+    .eq("active", true)
+    .returns<{ category: string }[]>();
+  return [...new Set((data ?? []).map((row) => row.category))].sort();
+}
+
+export async function getProductsByCategory(
+  category: string,
+  limit = 4
+): Promise<ProductWithDetails[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("products")
+    .select("*, product_images(*), product_sizes(*)")
+    .eq("active", true)
+    .eq("category", category)
+    .order("created_at", { ascending: false })
+    .limit(limit)
+    .returns<ProductWithDetails[]>();
+  return data ?? [];
+}
+
 export async function getRelatedProducts(
   product: ProductRow,
   limit = 4

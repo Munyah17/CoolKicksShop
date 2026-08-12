@@ -6,7 +6,7 @@ import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const heroSlideSchema = z.object({
-  imageUrl: z.string().trim().url(),
+  imageUrl: z.union([z.literal(""), z.string().trim().url()]),
   headline: z.string().trim().max(120).optional(),
   subheadline: z.string().trim().max(200).optional(),
   ctaLabel: z.string().trim().max(40).optional(),
@@ -36,7 +36,7 @@ export async function createHeroSlide(formData: FormData) {
 
   const admin = createAdminClient();
   await admin.from("hero_slides").insert({
-    image_url: parsed.data.imageUrl,
+    image_url: parsed.data.imageUrl || null,
     headline: parsed.data.headline || null,
     subheadline: parsed.data.subheadline || null,
     cta_label: parsed.data.ctaLabel || null,
@@ -60,7 +60,7 @@ export async function updateHeroSlide(id: string, formData: FormData) {
   await admin
     .from("hero_slides")
     .update({
-      image_url: parsed.data.imageUrl,
+      image_url: parsed.data.imageUrl || null,
       headline: parsed.data.headline || null,
       subheadline: parsed.data.subheadline || null,
       cta_label: parsed.data.ctaLabel || null,

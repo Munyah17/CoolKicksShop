@@ -43,6 +43,14 @@ export function ChevronRightIcon({ className = "h-4 w-4" }: IconProps) {
   );
 }
 
+export function ChevronLeftIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} className={className} aria-hidden="true">
+      <path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function MinusIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} className={className} aria-hidden="true">
