@@ -112,6 +112,9 @@ export type ProductWithDetails = ProductRow & {
 export interface SettingsRow {
   id: true;
   logo_url: string | null;
+  instagram_url: string | null;
+  whatsapp_number: string | null;
+  contact_email: string | null;
   updated_at: string;
 }
 

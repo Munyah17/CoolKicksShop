@@ -20,8 +20,9 @@ export function siteUrl(path = "") {
   return `${base.replace(/\/$/, "")}${path}`;
 }
 
-export function whatsappLink(message?: string) {
-  if (!siteConfig.whatsappNumber) return siteConfig.instagramUrl;
+export function whatsappLink(message?: string, numberOverride?: string) {
+  const number = numberOverride || siteConfig.whatsappNumber;
+  if (!number) return siteConfig.instagramUrl;
   const text = message ? `?text=${encodeURIComponent(message)}` : "";
-  return `https://wa.me/${siteConfig.whatsappNumber}${text}`;
+  return `https://wa.me/${number}${text}`;
 }
