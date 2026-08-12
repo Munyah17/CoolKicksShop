@@ -6,7 +6,7 @@ export default function NotFound() {
       <p className="text-xs font-medium uppercase tracking-widest text-muted">404</p>
       <h1 className="mt-2 text-xl font-semibold text-neutral-900">We couldn&apos;t find that page.</h1>
       <p className="mt-2 text-sm text-muted">It may have sold out or moved.</p>
-      <Link href="/shop" className="mt-6 bg-neutral-900 px-8 py-3.5 text-xs font-semibold uppercase tracking-widest text-white">
+      <Link href="/shop" className="mt-6 rounded-md bg-neutral-900 px-8 py-3.5 text-xs font-semibold uppercase tracking-widest text-white">
         Shop Sneakers
       </Link>
     </div>

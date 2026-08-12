@@ -226,7 +226,7 @@ export function ProductForm({ product }: { product?: ProductWithDetails }) {
       <button
         type="submit"
         disabled={isPending}
-        className="mt-8 bg-neutral-900 px-8 py-3 text-xs font-semibold uppercase tracking-widest text-white disabled:opacity-50"
+        className="mt-8 rounded-md bg-neutral-900 px-8 py-3 text-xs font-semibold uppercase tracking-widest text-white disabled:opacity-50"
       >
         {isPending ? "Saving…" : "Save Product"}
       </button>

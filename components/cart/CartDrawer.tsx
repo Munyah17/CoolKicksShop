@@ -34,7 +34,7 @@ export function CartDrawer() {
             <Link
               href="/shop"
               onClick={close}
-              className="bg-neutral-900 px-6 py-3 text-xs font-semibold uppercase tracking-widest text-white"
+              className="rounded-md bg-neutral-900 px-6 py-3 text-xs font-semibold uppercase tracking-widest text-white"
             >
               Shop Sneakers
             </Link>
@@ -102,7 +102,7 @@ export function CartDrawer() {
               <Link
                 href="/checkout"
                 onClick={close}
-                className="mt-4 block w-full bg-neutral-900 py-3 text-center text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-neutral-700"
+                className="mt-4 block w-full rounded-md bg-neutral-900 py-3 text-center text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-neutral-700"
               >
                 Checkout
               </Link>

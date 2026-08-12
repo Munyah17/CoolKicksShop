@@ -11,7 +11,7 @@ export default async function AdminProductsPage() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold tracking-tight text-neutral-900">Products</h1>
-        <Link href="/admin/products/new" className="bg-neutral-900 px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-white">
+        <Link href="/admin/products/new" className="rounded-md bg-neutral-900 px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-white">
           Add Product
         </Link>
       </div>

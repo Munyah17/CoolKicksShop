@@ -71,6 +71,7 @@ export interface OrderRow {
   currency: string;
   payment_status: PaymentStatus;
   order_status: OrderStatus;
+  user_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -107,3 +108,21 @@ export type ProductWithDetails = ProductRow & {
   product_images: ProductImageRow[];
   product_sizes: ProductSizeRow[];
 };
+
+export interface SettingsRow {
+  id: true;
+  logo_url: string | null;
+  updated_at: string;
+}
+
+export interface HeroSlideRow {
+  id: string;
+  image_url: string;
+  headline: string | null;
+  subheadline: string | null;
+  cta_label: string | null;
+  cta_href: string | null;
+  display_order: number;
+  active: boolean;
+  created_at: string;
+}

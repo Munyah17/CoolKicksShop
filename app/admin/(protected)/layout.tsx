@@ -8,6 +8,8 @@ const navLinks = [
   { href: "/admin/orders", label: "Orders" },
   { href: "/admin/products", label: "Products" },
   { href: "/admin/delivery", label: "Delivery" },
+  { href: "/admin/hero-slides", label: "Hero Slides" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

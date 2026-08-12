@@ -41,21 +41,21 @@ export function MockCheckout({ reference, amount }: { reference: string; amount:
         <button
           onClick={() => simulate("paid")}
           disabled={pending !== null}
-          className="w-full rounded bg-neutral-900 py-3 text-sm font-medium text-white transition hover:bg-neutral-700 disabled:opacity-50"
+          className="w-full rounded-md bg-neutral-900 py-3 text-sm font-medium text-white transition hover:bg-neutral-700 disabled:opacity-50"
         >
           {pending === "paid" ? "Processing…" : "Simulate Successful Payment"}
         </button>
         <button
           onClick={() => simulate("failed")}
           disabled={pending !== null}
-          className="w-full rounded border border-neutral-300 py-3 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50 disabled:opacity-50"
+          className="w-full rounded-md border border-neutral-300 py-3 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50 disabled:opacity-50"
         >
           {pending === "failed" ? "Processing…" : "Simulate Failed Payment"}
         </button>
         <button
           onClick={() => simulate("cancelled")}
           disabled={pending !== null}
-          className="w-full rounded border border-neutral-300 py-3 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50 disabled:opacity-50"
+          className="w-full rounded-md border border-neutral-300 py-3 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50 disabled:opacity-50"
         >
           {pending === "cancelled" ? "Processing…" : "Simulate Cancelled Payment"}
         </button>

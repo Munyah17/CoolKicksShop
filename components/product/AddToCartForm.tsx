@@ -56,7 +56,7 @@ export function AddToCartForm({
                 setSelectedSize(size.size);
                 setAdded(false);
               }}
-              className={`h-11 border text-sm font-medium transition ${
+              className={`h-11 rounded-md border text-sm font-medium transition ${
                 disabled
                   ? "cursor-not-allowed border-border text-neutral-300 line-through"
                   : isSelected
@@ -74,7 +74,7 @@ export function AddToCartForm({
         type="button"
         onClick={handleAdd}
         disabled={!canAdd}
-        className="mt-6 w-full bg-neutral-900 py-4 text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
+        className="mt-6 w-full rounded-md bg-neutral-900 py-4 text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
       >
         {added ? "Added ✓" : selectedSize ? "Add to Cart" : "Select a Size"}
       </button>

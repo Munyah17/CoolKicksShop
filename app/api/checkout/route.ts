@@ -3,6 +3,7 @@ import { checkoutSchema } from "@/lib/validation/checkout";
 import { createOrderFromCheckout } from "@/lib/orders/createOrder";
 import { initiatePaynowPayment } from "@/lib/orders/initiatePayment";
 import { CheckoutError } from "@/lib/orders/errors";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   let body: unknown;
@@ -19,7 +20,12 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { order } = await createOrderFromCheckout(parsed.data);
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const { order } = await createOrderFromCheckout(parsed.data, user?.id ?? null);
     const browserUrl = await initiatePaynowPayment(order);
     return NextResponse.json({ reference: order.reference, redirectUrl: browserUrl });
   } catch (err) {

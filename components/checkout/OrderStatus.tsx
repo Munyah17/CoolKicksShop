@@ -115,7 +115,7 @@ export function OrderStatus({ initial, shouldPoll }: { initial: OrderSummary; sh
           <button
             onClick={retryPayment}
             disabled={retrying}
-            className="w-full max-w-xs bg-neutral-900 py-3.5 text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-neutral-700 disabled:opacity-50"
+            className="w-full max-w-xs rounded-md bg-neutral-900 py-3.5 text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-neutral-700 disabled:opacity-50"
           >
             {retrying ? "Redirecting…" : "Try Payment Again"}
           </button>

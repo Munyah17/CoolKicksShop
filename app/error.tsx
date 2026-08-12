@@ -16,11 +16,11 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
       <div className="mt-6 flex gap-3">
         <button
           onClick={reset}
-          className="bg-neutral-900 px-6 py-3 text-xs font-semibold uppercase tracking-widest text-white"
+          className="rounded-md bg-neutral-900 px-6 py-3 text-xs font-semibold uppercase tracking-widest text-white"
         >
           Try Again
         </button>
-        <Link href="/" className="border border-border px-6 py-3 text-xs font-semibold uppercase tracking-widest text-neutral-700">
+        <Link href="/" className="rounded-md border border-border px-6 py-3 text-xs font-semibold uppercase tracking-widest text-neutral-700">
           Go Home
         </Link>
       </div>

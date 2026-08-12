@@ -83,7 +83,7 @@ export function CheckoutForm({ deliveryOptions }: { deliveryOptions: DeliveryOpt
     return (
       <div className="mt-16 flex flex-col items-center gap-4 text-center">
         <p className="text-sm text-muted">Your cart is empty.</p>
-        <Link href="/shop" className="bg-neutral-900 px-8 py-3.5 text-xs font-semibold uppercase tracking-widest text-white">
+        <Link href="/shop" className="rounded-md bg-neutral-900 px-8 py-3.5 text-xs font-semibold uppercase tracking-widest text-white">
           Shop Sneakers
         </Link>
       </div>
@@ -221,7 +221,7 @@ export function CheckoutForm({ deliveryOptions }: { deliveryOptions: DeliveryOpt
           <button
             type="submit"
             disabled={!canSubmit}
-            className="mt-6 w-full bg-neutral-900 py-4 text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
+            className="mt-6 w-full rounded-md bg-neutral-900 py-4 text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-300"
           >
             {submitting ? "Redirecting to Paynow…" : "Pay Now"}
           </button>
@@ -259,7 +259,7 @@ function MethodButton({ label, active, onClick }: { label: string; active: boole
     <button
       type="button"
       onClick={onClick}
-      className={`px-4 py-2.5 text-sm font-medium transition ${
+      className={`rounded-md px-4 py-2.5 text-sm font-medium transition ${
         active ? "border border-neutral-900 bg-neutral-900 text-white" : "border border-border text-neutral-700 hover:border-neutral-400"
       }`}
     >

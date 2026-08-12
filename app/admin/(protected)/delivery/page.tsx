@@ -48,7 +48,7 @@ export default async function AdminDeliveryPage() {
             </label>
             <button
               type="submit"
-              className="bg-neutral-900 px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-white"
+              className="rounded-md bg-neutral-900 px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-white"
             >
               Save
             </button>
@@ -84,7 +84,7 @@ export default async function AdminDeliveryPage() {
           </label>
           <button
             type="submit"
-            className="bg-neutral-900 px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-white"
+            className="rounded-md bg-neutral-900 px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-white"
           >
             Add
           </button>

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/browser";
-import { siteConfig } from "@/lib/config";
 
-export default function AdminLoginPage() {
+export function AccountLoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -26,17 +27,14 @@ export default function AdminLoginPage() {
       return;
     }
 
-    router.push("/admin");
+    router.push(searchParams.get("next") || "/account");
     router.refresh();
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm border border-border bg-white p-8">
-        <p className="text-xs font-medium uppercase tracking-widest text-muted">{siteConfig.legalName}</p>
-        <h1 className="mt-1 text-xl font-semibold text-neutral-900">Admin Login</h1>
-
-        <label className="mt-6 block">
+    <>
+      <form onSubmit={handleSubmit} className="mt-6">
+        <label className="block">
           <span className="text-xs font-medium text-neutral-600">Email</span>
           <input
             type="email"
@@ -47,7 +45,6 @@ export default function AdminLoginPage() {
             autoComplete="username"
           />
         </label>
-
         <label className="mt-4 block">
           <span className="text-xs font-medium text-neutral-600">Password</span>
           <input
@@ -70,6 +67,18 @@ export default function AdminLoginPage() {
           {submitting ? "Signing in…" : "Sign In"}
         </button>
       </form>
-    </div>
+
+      <p className="mt-6 text-center text-sm text-muted">
+        New here?{" "}
+        <Link href="/account/signup" className="font-medium text-neutral-900 underline underline-offset-4">
+          Create an account
+        </Link>
+      </p>
+      <p className="mt-2 text-center text-sm text-muted">
+        <Link href="/checkout" className="underline underline-offset-4">
+          Continue as guest
+        </Link>
+      </p>
+    </>
   );
 }

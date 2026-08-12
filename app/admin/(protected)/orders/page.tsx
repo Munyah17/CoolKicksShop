@@ -41,7 +41,7 @@ export default async function AdminOrdersPage({
             </option>
           ))}
         </select>
-        <button type="submit" className="bg-neutral-900 px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-white">
+        <button type="submit" className="rounded-md bg-neutral-900 px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-white">
           Filter
         </button>
       </form>

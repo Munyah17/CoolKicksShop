@@ -1,5 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
-import type { DeliveryOptionRow, ProductRow, ProductWithDetails } from "@/types/database";
+import type {
+  DeliveryOptionRow,
+  HeroSlideRow,
+  ProductRow,
+  ProductWithDetails,
+  SettingsRow,
+} from "@/types/database";
 
 export { primaryImage, sortedSizes, isInStock } from "./helpers";
 
@@ -78,5 +84,22 @@ export async function getActiveDeliveryOptions(): Promise<DeliveryOptionRow[]> {
     .eq("active", true)
     .order("sort_order")
     .returns<DeliveryOptionRow[]>();
+  return data ?? [];
+}
+
+export async function getSiteSettings(): Promise<SettingsRow | null> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("settings").select("*").eq("id", true).maybeSingle<SettingsRow>();
+  return data;
+}
+
+export async function getActiveHeroSlides(): Promise<HeroSlideRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("hero_slides")
+    .select("*")
+    .eq("active", true)
+    .order("display_order")
+    .returns<HeroSlideRow[]>();
   return data ?? [];
 }

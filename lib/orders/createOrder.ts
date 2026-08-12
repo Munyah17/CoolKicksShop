@@ -28,7 +28,8 @@ interface DraftItem {
 // delivery fee are all re-read from the database here -- nothing the
 // client sent is trusted except product ids, sizes and quantities.
 export async function createOrderFromCheckout(
-  input: CheckoutInput
+  input: CheckoutInput,
+  userId: string | null = null
 ): Promise<{ order: OrderRow; items: OrderItemRow[]; payment: PaymentRow }> {
   const admin = createAdminClient();
 
@@ -105,6 +106,7 @@ export async function createOrderFromCheckout(
       delivery_fee: deliveryFee,
       subtotal: fromCents(subtotalCents),
       total: fromCents(totalCents),
+      user_id: userId,
       currency: siteConfig.currency,
     })
     .select()
