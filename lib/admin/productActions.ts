@@ -138,6 +138,40 @@ async function syncImages(
   );
 }
 
+export interface UploadImageResult {
+  ok: boolean;
+  url?: string;
+  error?: string;
+}
+
+export async function uploadProductImage(formData: FormData): Promise<UploadImageResult> {
+  const { isAdmin } = await requireAdmin();
+  if (!isAdmin) return { ok: false, error: "Not authorized." };
+
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, error: "No file provided." };
+  }
+  if (!file.type.startsWith("image/")) {
+    return { ok: false, error: "Only image files are allowed." };
+  }
+
+  const admin = createAdminClient();
+  const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+  const path = `${crypto.randomUUID()}.${ext}`;
+
+  const { error } = await admin.storage.from("product-images").upload(path, file, {
+    contentType: file.type,
+    upsert: false,
+  });
+  if (error) {
+    return { ok: false, error: "Upload failed. Please try again." };
+  }
+
+  const { data } = admin.storage.from("product-images").getPublicUrl(path);
+  return { ok: true, url: data.publicUrl };
+}
+
 export async function setProductActive(id: string, active: boolean) {
   const { isAdmin } = await requireAdmin();
   if (!isAdmin) throw new Error("Not authorized.");
