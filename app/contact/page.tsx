@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
 import { siteConfig, whatsappLink } from "@/lib/config";
+import { getSiteSettings } from "@/lib/catalogue/queries";
 
 export const metadata: Metadata = {
   title: "Contact",
   description: `Get in touch with ${siteConfig.legalName}.`,
 };
 
-export default function ContactPage() {
-  const hasWhatsapp = Boolean(siteConfig.whatsappNumber);
+export default async function ContactPage() {
+  const settings = await getSiteSettings();
+
+  const instagramUrl = settings?.instagram_url || siteConfig.instagramUrl;
+  const whatsappNumber = settings?.whatsapp_number || siteConfig.whatsappNumber;
+  const contactEmail = settings?.contact_email || siteConfig.contactEmail;
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-14 sm:px-6">
@@ -17,15 +22,11 @@ export default function ContactPage() {
       </p>
 
       <div className="mt-8 space-y-4">
-        <ContactRow
-          label="Instagram"
-          value="@coolkicksklan"
-          href={siteConfig.instagramUrl}
-        />
-        {hasWhatsapp && <ContactRow label="WhatsApp" value={siteConfig.whatsappNumber} href={whatsappLink()} />}
-        {siteConfig.contactEmail && (
-          <ContactRow label="Email" value={siteConfig.contactEmail} href={`mailto:${siteConfig.contactEmail}`} />
+        {instagramUrl && <ContactRow label="Instagram" value="@coolkicksklan" href={instagramUrl} />}
+        {whatsappNumber && (
+          <ContactRow label="WhatsApp" value={whatsappNumber} href={whatsappLink(undefined, whatsappNumber)} />
         )}
+        {contactEmail && <ContactRow label="Email" value={contactEmail} href={`mailto:${contactEmail}`} />}
       </div>
     </div>
   );

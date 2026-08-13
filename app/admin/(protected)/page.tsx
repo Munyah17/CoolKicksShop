@@ -4,6 +4,7 @@ import { formatMoney } from "@/lib/money";
 import { siteConfig } from "@/lib/config";
 import { StatCard } from "@/components/admin/StatCard";
 import { StatusBadge } from "@/components/admin/StatusBadge";
+import { RevenueChart } from "@/components/admin/RevenueChart";
 
 export default async function AdminDashboardPage() {
   const stats = await getDashboardStats();
@@ -14,12 +15,18 @@ export default async function AdminDashboardPage() {
     <div>
       <h1 className="text-xl font-semibold uppercase tracking-widest text-neutral-900">{greeting}</h1>
 
-      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-5">
+      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-7">
         <StatCard label="Today's Sales" value={formatMoney(stats.todaySales, siteConfig.currencySymbol)} />
         <StatCard label="Orders Today" value={String(stats.todayOrderCount)} />
+        <StatCard label="Total Revenue" value={formatMoney(stats.totalRevenue, siteConfig.currencySymbol)} />
+        <StatCard label="Total Orders" value={String(stats.totalOrders)} />
         <StatCard label="Awaiting Payment" value={String(stats.awaitingPayment)} />
         <StatCard label="To Dispatch" value={String(stats.toDispatch)} />
         <StatCard label="Low Stock" value={String(stats.lowStockCount)} />
+      </div>
+
+      <div className="mt-8">
+        <RevenueChart points={stats.revenueTrend} />
       </div>
 
       <div className="mt-10">

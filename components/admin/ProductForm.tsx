@@ -1,8 +1,8 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { saveProduct, type SaveProductResult } from "@/lib/admin/productActions";
+import { saveProduct, uploadProductImage, type SaveProductResult } from "@/lib/admin/productActions";
 import { slugify } from "@/lib/utils/slugify";
 import type { ProductWithDetails } from "@/types/database";
 
@@ -27,6 +27,38 @@ export function ProductForm({ product }: { product?: ProductWithDetails }) {
   const [images, setImages] = useState<ImageRow[]>(
     product?.product_images.map((img) => ({ url: img.url, alt: img.alt ?? "", isPrimary: img.is_primary })) ?? []
   );
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFileUpload(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    setUploadError(null);
+
+    const uploaded: ImageRow[] = [];
+    for (const file of Array.from(files)) {
+      const fd = new FormData();
+      fd.set("file", file);
+      const result = await uploadProductImage(fd);
+      if (result.ok && result.url) {
+        uploaded.push({ url: result.url, alt: "", isPrimary: false });
+      } else {
+        setUploadError(result.error ?? `Could not upload ${file.name}.`);
+      }
+    }
+
+    if (uploaded.length > 0) {
+      setImages((prev) => {
+        const next = [...prev, ...uploaded];
+        if (!next.some((i) => i.isPrimary) && next.length > 0) next[0].isPrimary = true;
+        return next;
+      });
+    }
+
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
 
   const [state, formAction, isPending] = useActionState<SaveProductResult | null, FormData>(
     async (_prev, formData) => saveProduct(formData),
@@ -177,7 +209,24 @@ export function ProductForm({ product }: { product?: ProductWithDetails }) {
 
       <div className="mt-8">
         <h2 className="text-xs font-semibold uppercase tracking-widest text-muted">Images</h2>
-        <p className="mt-1 text-xs text-muted">Paste image URLs (e.g. from Supabase Storage).</p>
+        <p className="mt-1 text-xs text-muted">
+          Upload image files directly (up to 50MB each), or paste a hosted URL below.
+        </p>
+
+        <div className="mt-3">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            disabled={uploading}
+            onChange={(e) => handleFileUpload(e.target.files)}
+            className="block text-sm text-neutral-700 file:mr-3 file:rounded-md file:border-0 file:bg-neutral-900 file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-widest file:text-white hover:file:bg-neutral-700 disabled:opacity-50"
+          />
+          {uploading && <p className="mt-2 text-xs text-muted">Uploading…</p>}
+          {uploadError && <p className="mt-2 text-xs text-red-600">{uploadError}</p>}
+        </div>
+
         <div className="mt-3 space-y-2">
           {images.map((row, i) => (
             <div key={i} className="flex items-center gap-2">
