@@ -53,11 +53,20 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </aside>
 
         <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between border-b border-border bg-white px-4 py-3 sm:hidden">
-            <p className="text-sm font-bold">Admin</p>
-            <nav className="flex gap-4">
+          <div className="border-b border-border bg-white sm:hidden">
+            <div className="flex items-center justify-between px-4 py-3">
+              <p className="text-sm font-bold">Admin</p>
+              <form action={signOutAdmin}>
+                <button className="text-xs text-muted hover:text-neutral-900">Sign out</button>
+              </form>
+            </div>
+            <nav className="flex gap-4 overflow-x-auto px-4 pb-3">
               {navLinks.map((link) => (
-                <Link key={link.href} href={link.href} className="text-xs font-medium text-neutral-700">
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="shrink-0 whitespace-nowrap text-xs font-medium text-neutral-700"
+                >
                   {link.label}
                 </Link>
               ))}

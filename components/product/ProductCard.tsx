@@ -41,10 +41,10 @@ export function ProductCard({ product }: { product: ProductWithDetails }) {
           <h3 className="text-sm font-medium text-neutral-900">{product.name}</h3>
           {product.colour && <p className="text-xs text-muted">{product.colour}</p>}
         </div>
-        <div className="shrink-0 text-right text-sm">
+        <div className="flex shrink-0 flex-col items-end text-right text-sm">
           {onSale ? (
             <>
-              <span className="mr-1.5 text-muted line-through">
+              <span className="text-xs text-muted line-through">
                 {formatMoney(product.price, siteConfig.currencySymbol)}
               </span>
               <span className="font-medium text-neutral-900">
