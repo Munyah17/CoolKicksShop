@@ -61,9 +61,15 @@ export function SiteFooter() {
             </div>
           ))}
         </div>
-        <p className="mt-10 text-xs text-muted">
-          &copy; {new Date().getFullYear()} {siteConfig.legalName}. All rights reserved.
-        </p>
+        <a
+          href="https://globalspaceweb.co.zw"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-10 block text-xs text-muted hover:text-neutral-900"
+        >
+          &copy; {new Date().getFullYear()} {siteConfig.legalName}. All rights reserved. Developed &amp; Powered By
+          Global Space Web
+        </a>
       </div>
     </footer>
   );
