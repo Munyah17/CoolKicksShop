@@ -1,19 +1,18 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/auth/admin";
 import { UserIcon } from "@/components/ui/icons";
 
+// Admins sign in through the same Supabase Auth session as customers --
+// route them straight to /admin instead of the customer /account page,
+// which they'd otherwise never see a link to from here.
 export async function AccountLink() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, isAdmin } = await requireAdmin();
+
+  const href = !user ? "/account/login" : isAdmin ? "/admin" : "/account";
+  const label = !user ? "Sign in" : isAdmin ? "Admin dashboard" : "Your account";
 
   return (
-    <Link
-      href={user ? "/account" : "/account/login"}
-      aria-label={user ? "Your account" : "Sign in"}
-      className="flex h-9 w-9 items-center justify-center text-neutral-900"
-    >
+    <Link href={href} aria-label={label} className="flex h-9 w-9 items-center justify-center text-neutral-900">
       <UserIcon />
     </Link>
   );
