@@ -31,8 +31,8 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-border">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-          <div className="col-span-2 sm:col-span-1">
+        <div className="grid grid-cols-2 gap-8 sm:flex sm:flex-row sm:justify-between sm:gap-8">
+          <div className="col-span-2">
             <p className="text-lg font-bold tracking-tight text-neutral-900">
               {siteConfig.brandName.toUpperCase()}
             </p>
