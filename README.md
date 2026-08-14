@@ -109,7 +109,7 @@ payments. A `Test Mode` banner appears site-wide whenever the mock is active.
    ```bash
    npm run dev
    ```
-   Visit `http://localhost:6100`. Admin is at `/admin/login`.
+   Visit `http://localhost:6137`. Admin is at `/admin/login`.
 
 ## Going live with Paynow
 

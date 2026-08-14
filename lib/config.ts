@@ -16,7 +16,7 @@ export const siteConfig = {
 } as const;
 
 export function siteUrl(path = "") {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6100";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6137";
   return `${base.replace(/\/$/, "")}${path}`;
 }
 
