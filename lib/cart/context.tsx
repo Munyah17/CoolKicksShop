@@ -14,6 +14,7 @@ type Action =
   | { type: "add"; item: CartItem }
   | { type: "remove"; productId: string; size: string }
   | { type: "setQuantity"; productId: string; size: string; quantity: number }
+  | { type: "chooseSize"; productId: string; currentSize: string; newSize: string }
   | { type: "clear" }
   | { type: "hydrate"; items: CartItem[] };
 
@@ -48,6 +49,28 @@ function reducer(state: State, action: Action): State {
           )
           .filter((i) => i.quantity > 0),
       };
+    case "chooseSize": {
+      const idx = state.items.findIndex(
+        (i) => i.productId === action.productId && i.size === action.currentSize
+      );
+      if (idx === -1) return state;
+      const chosen = state.items[idx];
+
+      const mergeIdx = state.items.findIndex(
+        (i, j) => j !== idx && i.productId === action.productId && i.size === action.newSize
+      );
+      if (mergeIdx !== -1) {
+        const items = state.items
+          .map((i, j) => (j === mergeIdx ? { ...i, quantity: i.quantity + chosen.quantity } : i))
+          .filter((_, j) => j !== idx);
+        return { ...state, items };
+      }
+
+      return {
+        ...state,
+        items: state.items.map((i, j) => (j === idx ? { ...i, size: action.newSize } : i)),
+      };
+    }
     case "clear":
       return { ...state, items: [] };
     default:
@@ -60,6 +83,7 @@ interface CartContextValue {
   addItem: (item: CartItem) => void;
   removeItem: (productId: string, size: string) => void;
   setQuantity: (productId: string, size: string, quantity: number) => void;
+  chooseSize: (productId: string, currentSize: string, newSize: string) => void;
   clear: () => void;
   subtotal: number;
   itemCount: number;
@@ -108,6 +132,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     },
     removeItem: (productId, size) => dispatch({ type: "remove", productId, size }),
     setQuantity: (productId, size, quantity) => dispatch({ type: "setQuantity", productId, size, quantity }),
+    chooseSize: (productId, currentSize, newSize) =>
+      dispatch({ type: "chooseSize", productId, currentSize, newSize }),
     clear: () => dispatch({ type: "clear" }),
     subtotal,
     itemCount,

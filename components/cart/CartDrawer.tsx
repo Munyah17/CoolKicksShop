@@ -7,9 +7,11 @@ import { formatMoney } from "@/lib/money";
 import { siteConfig } from "@/lib/config";
 import { CloseIcon, MinusIcon, PlusIcon } from "@/components/ui/icons";
 import { ProductImagePlaceholder } from "@/components/product/ProductImagePlaceholder";
+import { SizeSelect } from "./SizeSelect";
 
 export function CartDrawer() {
   const { items, isOpen, close, subtotal, setQuantity, removeItem } = useCart();
+  const hasUnselectedSizes = items.some((i) => !i.size);
 
   if (!isOpen) return null;
 
@@ -55,7 +57,9 @@ export function CartDrawer() {
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <p className="text-sm font-medium text-neutral-900">{item.name}</p>
-                        <p className="text-xs text-muted">Size {item.size}</p>
+                        <div className="mt-1">
+                          <SizeSelect item={item} />
+                        </div>
                       </div>
                       <p className="shrink-0 text-sm font-medium text-neutral-900">
                         {formatMoney(item.unitPrice * item.quantity, siteConfig.currencySymbol)}
@@ -99,13 +103,19 @@ export function CartDrawer() {
                 </span>
               </div>
               <p className="mt-1 text-xs text-muted">Delivery calculated at checkout.</p>
-              <Link
-                href="/checkout"
-                onClick={close}
-                className="mt-4 block w-full rounded-md bg-neutral-900 py-3 text-center text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-neutral-700"
-              >
-                Checkout
-              </Link>
+              {hasUnselectedSizes ? (
+                <p className="mt-4 text-center text-xs text-red-600">
+                  Please select a size for every item before checking out.
+                </p>
+              ) : (
+                <Link
+                  href="/checkout"
+                  onClick={close}
+                  className="mt-4 block w-full rounded-md bg-neutral-900 py-3 text-center text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-neutral-700"
+                >
+                  Checkout
+                </Link>
+              )}
             </div>
           </>
         )}

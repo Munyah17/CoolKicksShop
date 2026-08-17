@@ -95,6 +95,17 @@ export function CheckoutForm({ deliveryOptions }: { deliveryOptions: DeliveryOpt
     );
   }
 
+  if (items.some((i) => !i.size)) {
+    return (
+      <div className="mt-16 flex flex-col items-center gap-4 text-center">
+        <p className="text-sm text-muted">Please select a size for every item in your cart before checking out.</p>
+        <Link href="/cart" className="rounded-md bg-neutral-900 px-8 py-3.5 text-xs font-semibold uppercase tracking-widest text-white">
+          Back to Cart
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-5">
       <div className="space-y-6 lg:col-span-3">

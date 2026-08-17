@@ -7,9 +7,11 @@ import { formatMoney } from "@/lib/money";
 import { siteConfig } from "@/lib/config";
 import { MinusIcon, PlusIcon } from "@/components/ui/icons";
 import { ProductImagePlaceholder } from "@/components/product/ProductImagePlaceholder";
+import { SizeSelect } from "@/components/cart/SizeSelect";
 
 export default function CartPage() {
   const { items, subtotal, setQuantity, removeItem } = useCart();
+  const hasUnselectedSizes = items.some((i) => !i.size);
 
   if (items.length === 0) {
     return (
@@ -41,7 +43,9 @@ export default function CartPage() {
                 <Link href={`/product/${item.slug}`} className="text-sm font-medium text-neutral-900 hover:underline">
                   {item.name}
                 </Link>
-                <p className="mt-1 text-xs text-muted">Size {item.size}</p>
+                <div className="mt-1.5">
+                  <SizeSelect item={item} />
+                </div>
                 <p className="mt-1 text-sm text-neutral-700 sm:hidden">
                   {formatMoney(item.unitPrice, siteConfig.currencySymbol)}
                 </p>
@@ -85,12 +89,18 @@ export default function CartPage() {
           <span className="font-medium text-neutral-900">{formatMoney(subtotal, siteConfig.currencySymbol)}</span>
         </div>
         <p className="w-full max-w-xs text-right text-xs text-muted sm:w-64">Delivery calculated at checkout.</p>
-        <Link
-          href="/checkout"
-          className="mt-4 w-full max-w-xs rounded-md bg-neutral-900 py-3.5 text-center text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-neutral-700 sm:w-64"
-        >
-          Checkout
-        </Link>
+        {hasUnselectedSizes ? (
+          <p className="mt-4 w-full max-w-xs text-right text-xs text-red-600 sm:w-64">
+            Please select a size for every item before checking out.
+          </p>
+        ) : (
+          <Link
+            href="/checkout"
+            className="mt-4 w-full max-w-xs rounded-md bg-neutral-900 py-3.5 text-center text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-neutral-700 sm:w-64"
+          >
+            Checkout
+          </Link>
+        )}
       </div>
     </div>
   );

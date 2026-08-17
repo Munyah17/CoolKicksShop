@@ -39,13 +39,11 @@ export function ProductCard({ product }: { product: ProductWithDetails }) {
             </span>
           )}
         </div>
-      </Link>
-      <Link href={href} className="mt-3 flex items-start justify-between gap-2">
-        <div>
-          <h3 className="text-sm font-medium text-neutral-900">{product.name}</h3>
-          {product.colour && <p className="text-xs text-muted">{product.colour}</p>}
-        </div>
-        <div className="flex shrink-0 flex-col items-end text-right text-sm">
+        <h3 className="mt-3 line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug text-neutral-900">
+          {product.name}
+        </h3>
+        <p className="mt-1 h-4 text-xs text-muted">{product.colour || " "}</p>
+        <div className="mt-1 flex min-h-[2.25rem] flex-col justify-center text-sm">
           {onSale ? (
             <>
               <span className="text-xs text-muted line-through">
