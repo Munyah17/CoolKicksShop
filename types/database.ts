@@ -115,6 +115,8 @@ export interface SettingsRow {
   instagram_url: string | null;
   whatsapp_number: string | null;
   contact_email: string | null;
+  address: string | null;
+  phone: string | null;
   updated_at: string;
 }
 

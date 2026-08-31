@@ -19,8 +19,10 @@ export default function ReturnsPage() {
         packaging, reported within 48 hours of delivery.
       </p>
       <p>
-        <strong className="text-neutral-900">Refunds.</strong> Approved refunds are issued back
-        through Paynow to your original payment method.
+        <strong className="text-neutral-900">Refunds.</strong> Yes, we offer refunds. Once a
+        returned pair reaches us, we authenticate it before approving anything — this protects
+        genuine buyers and keeps counterfeit swaps out of the process. Approved refunds are issued
+        back through Paynow to your original payment method.
       </p>
       <p>Payment issues (charged but no order confirmation) should also be reported here.</p>
     </LegalPage>

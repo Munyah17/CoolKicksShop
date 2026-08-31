@@ -37,6 +37,7 @@ export function ProductForm({ product }: { product?: ProductWithDetails }) {
     setUploadError(null);
 
     const uploaded: ImageRow[] = [];
+    const failures: string[] = [];
     for (const file of Array.from(files)) {
       const fd = new FormData();
       fd.set("file", file);
@@ -44,9 +45,10 @@ export function ProductForm({ product }: { product?: ProductWithDetails }) {
       if (result.ok && result.url) {
         uploaded.push({ url: result.url, alt: "", isPrimary: false });
       } else {
-        setUploadError(result.error ?? `Could not upload ${file.name}.`);
+        failures.push(result.error ?? `Could not upload ${file.name}.`);
       }
     }
+    if (failures.length > 0) setUploadError(failures.join(" "));
 
     if (uploaded.length > 0) {
       setImages((prev) => {
@@ -72,7 +74,13 @@ export function ProductForm({ product }: { product?: ProductWithDetails }) {
   return (
     <form action={formAction} className="max-w-2xl">
       {product?.id && <input type="hidden" name="id" value={product.id} />}
-      <input type="hidden" name="sizesJson" value={JSON.stringify(sizes.filter((s) => s.size.trim()))} />
+      <input
+        type="hidden"
+        name="sizesJson"
+        value={JSON.stringify(
+          sizes.filter((s) => s.size.trim()).map((s) => ({ ...s, stock: Number.isNaN(s.stock) ? 0 : s.stock }))
+        )}
+      />
       <input
         type="hidden"
         name="imagesJson"
@@ -182,10 +190,11 @@ export function ProductForm({ product }: { product?: ProductWithDetails }) {
                 type="number"
                 min="0"
                 placeholder="Stock"
-                value={row.stock}
-                onChange={(e) =>
-                  setSizes(sizes.map((r, idx) => (idx === i ? { ...r, stock: Number(e.target.value) } : r)))
-                }
+                value={Number.isNaN(row.stock) ? "" : row.stock}
+                onChange={(e) => {
+                  const next = e.target.value === "" ? NaN : Number(e.target.value);
+                  setSizes(sizes.map((r, idx) => (idx === i ? { ...r, stock: next } : r)));
+                }}
                 className="input w-24"
               />
               <button

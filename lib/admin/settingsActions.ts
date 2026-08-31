@@ -10,6 +10,8 @@ const settingsSchema = z.object({
   instagramUrl: z.union([z.literal(""), z.string().trim().url()]),
   whatsappNumber: z.string().trim().max(20),
   contactEmail: z.union([z.literal(""), z.string().trim().email()]),
+  address: z.string().trim().max(300),
+  phone: z.string().trim().max(30),
 });
 
 export async function updateSettings(formData: FormData) {
@@ -21,19 +23,24 @@ export async function updateSettings(formData: FormData) {
     instagramUrl: formData.get("instagramUrl") || "",
     whatsappNumber: formData.get("whatsappNumber") || "",
     contactEmail: formData.get("contactEmail") || "",
+    address: formData.get("address") || "",
+    phone: formData.get("phone") || "",
   });
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Please check the settings form.");
 
   const admin = createAdminClient();
-  await admin
+  const { error } = await admin
     .from("settings")
     .update({
       logo_url: parsed.data.logoUrl || null,
       instagram_url: parsed.data.instagramUrl || null,
       whatsapp_number: parsed.data.whatsappNumber || null,
       contact_email: parsed.data.contactEmail || null,
+      address: parsed.data.address || null,
+      phone: parsed.data.phone || null,
     })
     .eq("id", true);
+  if (error) throw new Error("Could not save settings. Please try again.");
 
   revalidatePath("/", "layout");
   revalidatePath("/admin/settings");

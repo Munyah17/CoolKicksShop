@@ -17,7 +17,14 @@ export default async function DeliveryPage() {
     <div className="mx-auto max-w-2xl px-4 py-14 sm:px-6">
       <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Delivery</h1>
       <p className="mt-3 text-sm text-neutral-700">
-        We deliver across Zimbabwe. Choose your area at checkout — the fee is added automatically.
+        We deliver across Zimbabwe, or you can collect for free at pickup — delivery is entirely
+        optional at checkout. Choose your area and the fee is added automatically.
+      </p>
+      <p className="mt-3 text-sm text-neutral-700">
+        Fees are priced fairly, not marked up: intracity deliveries (within the same city, shop to
+        your address) are priced at that day&apos;s average InDrive rate for the route. Intercity
+        deliveries (town to town, city to city) are priced at prevailing professional courier rates
+        (e.g. FedEx) for that day.
       </p>
 
       <div className="mt-8 divide-y divide-border border-y border-border">

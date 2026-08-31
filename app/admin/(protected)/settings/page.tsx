@@ -61,6 +61,24 @@ export default async function AdminSettingsPage() {
               className="input mt-1"
             />
           </label>
+          <label className="mt-4 block">
+            <span className="text-xs font-medium text-neutral-600">Phone</span>
+            <input
+              name="phone"
+              defaultValue={settings?.phone ?? ""}
+              placeholder="e.g. 0777 317 446"
+              className="input mt-1"
+            />
+          </label>
+          <label className="mt-4 block">
+            <span className="text-xs font-medium text-neutral-600">Address</span>
+            <input
+              name="address"
+              defaultValue={settings?.address ?? ""}
+              placeholder="e.g. 6 Trinity Close, Greendale, Harare"
+              className="input mt-1"
+            />
+          </label>
         </div>
 
         <button

@@ -177,8 +177,26 @@ export async function setProductActive(id: string, active: boolean) {
   if (!isAdmin) throw new Error("Not authorized.");
 
   const admin = createAdminClient();
-  await admin.from("products").update({ active }).eq("id", id);
+  const { error } = await admin.from("products").update({ active }).eq("id", id);
+  if (error) throw new Error("Could not update product status.");
 
   revalidatePath("/admin/products");
   revalidatePath("/shop");
+  revalidatePath("/");
+}
+
+// Order history keeps its own snapshot of product name/size/price, and
+// order_items.product_id is ON DELETE SET NULL, so removing a product
+// never breaks past orders -- it just stops appearing in the catalogue.
+export async function deleteProduct(id: string) {
+  const { isAdmin } = await requireAdmin();
+  if (!isAdmin) throw new Error("Not authorized.");
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("products").delete().eq("id", id);
+  if (error) throw new Error("Could not delete product.");
+
+  revalidatePath("/admin/products");
+  revalidatePath("/shop");
+  revalidatePath("/");
 }

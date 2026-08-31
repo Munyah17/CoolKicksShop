@@ -35,7 +35,7 @@ export async function createHeroSlide(formData: FormData) {
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Invalid slide.");
 
   const admin = createAdminClient();
-  await admin.from("hero_slides").insert({
+  const { error } = await admin.from("hero_slides").insert({
     image_url: parsed.data.imageUrl || null,
     headline: parsed.data.headline || null,
     subheadline: parsed.data.subheadline || null,
@@ -44,6 +44,7 @@ export async function createHeroSlide(formData: FormData) {
     display_order: parsed.data.displayOrder,
     active: parsed.data.active,
   });
+  if (error) throw new Error("Could not create slide. Please try again.");
 
   revalidatePath("/");
   revalidatePath("/admin/hero-slides");
@@ -57,7 +58,7 @@ export async function updateHeroSlide(id: string, formData: FormData) {
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Invalid slide.");
 
   const admin = createAdminClient();
-  await admin
+  const { error } = await admin
     .from("hero_slides")
     .update({
       image_url: parsed.data.imageUrl || null,
@@ -69,6 +70,7 @@ export async function updateHeroSlide(id: string, formData: FormData) {
       active: parsed.data.active,
     })
     .eq("id", id);
+  if (error) throw new Error("Could not save slide. Please try again.");
 
   revalidatePath("/");
   revalidatePath("/admin/hero-slides");
@@ -79,7 +81,8 @@ export async function deleteHeroSlide(id: string) {
   if (!isAdmin) throw new Error("Not authorized.");
 
   const admin = createAdminClient();
-  await admin.from("hero_slides").delete().eq("id", id);
+  const { error } = await admin.from("hero_slides").delete().eq("id", id);
+  if (error) throw new Error("Could not delete slide. Please try again.");
 
   revalidatePath("/");
   revalidatePath("/admin/hero-slides");
