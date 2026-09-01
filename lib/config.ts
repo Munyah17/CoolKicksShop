@@ -2,17 +2,17 @@
 // scattering brand copy/links across components.
 
 export const siteConfig = {
-  brandName: "Got The Shoe",
-  legalName: "Cool Kicks",
+  brandName: "Got It",
+  legalName: "Got It",
   tagline: "Some people have good taste in life.",
   description:
-    "Got The Shoe is Cool Kicks' online sneaker boutique — premium, hand-picked kicks with delivery across Zimbabwe.",
-  instagramUrl: "https://www.instagram.com/coolkicksklan/",
+    "Got It is Zimbabwe's online sneaker boutique — premium, hand-picked kicks with delivery across Zimbabwe.",
+  instagramUrl: "https://www.instagram.com/gotitzim",
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "",
   contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "",
   currency: "USD",
   currencySymbol: "$",
-  orderReferencePrefix: "CK-",
+  orderReferencePrefix: "GI-",
 } as const;
 
 export function siteUrl(path = "") {
