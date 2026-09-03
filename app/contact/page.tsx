@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { siteConfig, whatsappLink } from "@/lib/config";
 import { getSiteSettings } from "@/lib/catalogue/queries";
+import { PhoneIcon, MailIcon, LocationIcon, InstagramIcon, WhatsAppIcon } from "@/components/ui/icons";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -22,36 +23,98 @@ export default async function ContactPage() {
   const address = settings?.address;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-14 sm:px-6">
+    <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
       <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Contact</h1>
       <p className="mt-3 text-sm text-neutral-700">
         Questions about sizing, a specific pair, or an existing order? Reach us here:
       </p>
 
-      <div className="mt-8 space-y-4">
-        {instagramUrl && <ContactRow label="Instagram" value={instagramHandle(instagramUrl)} href={instagramUrl} />}
-        {whatsappNumber && (
-          <ContactRow label="WhatsApp" value={whatsappNumber} href={whatsappLink(undefined, whatsappNumber)} />
+      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {phone && (
+          <ContactTile
+            icon={<PhoneIcon className="h-5 w-5" />}
+            label="Phone"
+            value={phone}
+            href={`tel:${phone.replace(/\s/g, "")}`}
+          />
         )}
-        {phone && <ContactRow label="Phone" value={phone} href={`tel:${phone.replace(/\s/g, "")}`} />}
-        {contactEmail && <ContactRow label="Email" value={contactEmail} href={`mailto:${contactEmail}`} />}
-        {address && <ContactRow label="Address" value={address} />}
+        {whatsappNumber && (
+          <ContactTile
+            icon={<WhatsAppIcon className="h-5 w-5" />}
+            label="WhatsApp"
+            value={whatsappNumber}
+            href={whatsappLink(undefined, whatsappNumber)}
+          />
+        )}
+        {contactEmail && (
+          <ContactTile
+            icon={<MailIcon className="h-5 w-5" />}
+            label="Email"
+            value={contactEmail}
+            href={`mailto:${contactEmail}`}
+          />
+        )}
+        {instagramUrl && (
+          <ContactTile
+            icon={<InstagramIcon className="h-5 w-5" />}
+            label="Instagram"
+            value={instagramHandle(instagramUrl)}
+            href={instagramUrl}
+          />
+        )}
+        {address && (
+          <ContactTile
+            icon={<LocationIcon className="h-5 w-5" />}
+            label="Address"
+            value={address}
+            className="sm:col-span-2"
+          />
+        )}
       </div>
+
+      {address && (
+        <div className="mt-8 overflow-hidden rounded-2xl border border-border">
+          <iframe
+            title="Store location map"
+            src={`https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`}
+            className="h-80 w-full"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+      )}
     </div>
   );
 }
 
-function ContactRow({ label, value, href }: { label: string; value: string; href?: string }) {
+function ContactTile({
+  icon,
+  label,
+  value,
+  href,
+  className = "",
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  href?: string;
+  className?: string;
+}) {
   const content = (
     <>
-      <span className="text-xs font-semibold uppercase tracking-widest text-muted">{label}</span>
-      <span className="text-sm font-medium text-neutral-900">{value}</span>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-700">
+        {icon}
+      </span>
+      <span className="min-w-0">
+        <span className="block text-xs font-semibold uppercase tracking-widest text-muted">{label}</span>
+        <span className="mt-0.5 block truncate text-sm font-medium text-neutral-900">{value}</span>
+      </span>
     </>
   );
-  const className = "flex items-center justify-between border border-border bg-white px-5 py-4 transition hover:border-neutral-400";
+  const tileClassName = `flex items-center gap-4 rounded-2xl border border-border bg-white px-5 py-4 transition hover:border-neutral-400 ${className}`;
 
   if (!href) {
-    return <div className={className}>{content}</div>;
+    return <div className={tileClassName}>{content}</div>;
   }
 
   return (
@@ -59,7 +122,7 @@ function ContactRow({ label, value, href }: { label: string; value: string; href
       href={href}
       target={href.startsWith("http") ? "_blank" : undefined}
       rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-      className={className}
+      className={tileClassName}
     >
       {content}
     </a>
