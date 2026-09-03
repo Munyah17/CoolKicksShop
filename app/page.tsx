@@ -6,6 +6,7 @@ import {
   getActiveHeroSlides,
   getTopCategories,
   getProductsByCategory,
+  getSiteSettings,
 } from "@/lib/catalogue/queries";
 import { ProductCard } from "@/components/product/ProductCard";
 import { HeroSlider } from "@/components/home/HeroSlider";
@@ -16,11 +17,12 @@ function categoryTitle(category: string): string {
 }
 
 export default async function HomePage() {
-  const [newArrivals, featured, heroSlides, topCategories] = await Promise.all([
+  const [newArrivals, featured, heroSlides, topCategories, settings] = await Promise.all([
     getNewArrivals(10),
     getFeaturedProducts(4),
     getActiveHeroSlides(),
     getTopCategories(2),
+    getSiteSettings(),
   ]);
 
   const categorySections = await Promise.all(
@@ -29,6 +31,12 @@ export default async function HomePage() {
       products: await getProductsByCategory(c.category, 4),
     }))
   );
+
+  const tagline = settings?.tagline || siteConfig.tagline;
+  const blurbHeading = settings?.homepage_blurb_heading || "Hand-picked kicks, not a warehouse dump.";
+  const blurbBody =
+    settings?.homepage_blurb_body ||
+    `${siteConfig.legalName} sources a small, considered selection of sneakers each drop. No overwhelming catalogue — just pairs worth owning.`;
 
   return (
     <div>
@@ -43,7 +51,7 @@ export default async function HomePage() {
             {siteConfig.brandName.toUpperCase()}
           </h1>
           <p className="mt-5 max-w-md text-balance text-base text-neutral-300 sm:text-lg">
-            &ldquo;{siteConfig.tagline}&rdquo;
+            &ldquo;{tagline}&rdquo;
           </p>
           <Link
             href="/shop"
@@ -86,13 +94,8 @@ export default async function HomePage() {
 
       <section className="border-y border-border bg-surface">
         <div className="mx-auto max-w-4xl px-6 py-16 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight text-neutral-900">
-            Hand-picked kicks, not a warehouse dump.
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm text-muted">
-            {siteConfig.legalName} sources a small, considered selection of sneakers each drop.
-            No overwhelming catalogue — just pairs worth owning.
-          </p>
+          <h2 className="text-2xl font-semibold tracking-tight text-neutral-900">{blurbHeading}</h2>
+          <p className="mx-auto mt-4 max-w-xl text-sm text-muted">{blurbBody}</p>
           <Link href="/about" className="mt-6 inline-block text-sm font-medium text-neutral-900 underline underline-offset-4">
             More about us
           </Link>

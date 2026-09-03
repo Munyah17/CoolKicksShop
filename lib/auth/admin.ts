@@ -18,12 +18,12 @@ export async function requireAdmin() {
     return { user: null, isAdmin: false as const, role: null as AdminRole };
   }
 
+  // select("*") rather than an explicit column list: PostgREST 400s a
+  // request for a column that doesn't exist yet, which would silently
+  // lock out every admin the moment this code ships ahead of the
+  // migration that adds `role`. "*" just omits it until then.
   const admin = createAdminClient();
-  const { data } = await admin
-    .from("admins")
-    .select("user_id, role")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const { data } = await admin.from("admins").select("*").eq("user_id", user.id).maybeSingle();
 
   return {
     user,

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
+import { getSiteSettings } from "@/lib/catalogue/queries";
 
 const columns = [
   {
@@ -27,7 +28,10 @@ const columns = [
   },
 ];
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const settings = await getSiteSettings();
+  const tagline = settings?.tagline || siteConfig.tagline;
+
   return (
     <footer className="border-t border-border">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
@@ -36,7 +40,7 @@ export function SiteFooter() {
             <p className="text-lg font-bold tracking-tight text-neutral-900">
               {siteConfig.brandName.toUpperCase()}
             </p>
-            <p className="mt-2 max-w-[22ch] text-sm text-muted">{siteConfig.tagline}</p>
+            <p className="mt-2 max-w-[22ch] text-sm text-muted">{tagline}</p>
             <a
               href={siteConfig.instagramUrl}
               target="_blank"

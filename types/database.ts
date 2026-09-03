@@ -117,6 +117,10 @@ export interface SettingsRow {
   contact_email: string | null;
   address: string | null;
   phone: string | null;
+  tagline: string | null;
+  homepage_blurb_heading: string | null;
+  homepage_blurb_body: string | null;
+  about_content: string | null;
   updated_at: string;
 }
 

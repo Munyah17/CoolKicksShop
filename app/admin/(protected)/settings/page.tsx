@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updateSettings } from "@/lib/admin/settingsActions";
+import { siteConfig } from "@/lib/config";
 import type { SettingsRow } from "@/types/database";
 
 async function getSettings(): Promise<SettingsRow | null> {
@@ -78,6 +79,61 @@ export default async function AdminSettingsPage() {
               placeholder="e.g. 6 Trinity Close, Greendale, Harare"
               className="input mt-1"
             />
+          </label>
+        </div>
+
+        <div className="border-t border-border pt-6">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-muted">Site Copy</h2>
+          <p className="mt-1 text-xs text-muted">
+            Leave a field blank to keep the site&apos;s default wording shown as its placeholder.
+          </p>
+
+          <label className="mt-4 block">
+            <span className="text-xs font-medium text-neutral-600">Tagline</span>
+            <input
+              name="tagline"
+              defaultValue={settings?.tagline ?? ""}
+              placeholder={siteConfig.tagline}
+              className="input mt-1"
+            />
+            <span className="mt-1 block text-xs text-muted">Shown in the footer and on the fallback hero.</span>
+          </label>
+
+          <label className="mt-4 block">
+            <span className="text-xs font-medium text-neutral-600">Homepage blurb heading</span>
+            <input
+              name="homepageBlurbHeading"
+              defaultValue={settings?.homepage_blurb_heading ?? ""}
+              placeholder="Hand-picked kicks, not a warehouse dump."
+              className="input mt-1"
+            />
+          </label>
+          <label className="mt-4 block">
+            <span className="text-xs font-medium text-neutral-600">Homepage blurb body</span>
+            <textarea
+              name="homepageBlurbBody"
+              rows={3}
+              defaultValue={settings?.homepage_blurb_body ?? ""}
+              placeholder={`${siteConfig.legalName} sources a small, considered selection of sneakers each drop. No overwhelming catalogue — just pairs worth owning.`}
+              className="input mt-1"
+            />
+            <span className="mt-1 block text-xs text-muted">
+              Shown in the section between the product grids and the footer.
+            </span>
+          </label>
+
+          <label className="mt-4 block">
+            <span className="text-xs font-medium text-neutral-600">About page content</span>
+            <textarea
+              name="aboutContent"
+              rows={8}
+              defaultValue={settings?.about_content ?? ""}
+              placeholder="Separate paragraphs with a blank line."
+              className="input mt-1"
+            />
+            <span className="mt-1 block text-xs text-muted">
+              Replaces the whole /about page body. Separate paragraphs with a blank line.
+            </span>
           </label>
         </div>
 

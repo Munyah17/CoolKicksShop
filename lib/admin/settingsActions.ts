@@ -12,6 +12,10 @@ const settingsSchema = z.object({
   contactEmail: z.union([z.literal(""), z.string().trim().email()]),
   address: z.string().trim().max(300),
   phone: z.string().trim().max(30),
+  tagline: z.string().trim().max(200),
+  homepageBlurbHeading: z.string().trim().max(200),
+  homepageBlurbBody: z.string().trim().max(600),
+  aboutContent: z.string().trim().max(4000),
 });
 
 export async function updateSettings(formData: FormData) {
@@ -25,6 +29,10 @@ export async function updateSettings(formData: FormData) {
     contactEmail: formData.get("contactEmail") || "",
     address: formData.get("address") || "",
     phone: formData.get("phone") || "",
+    tagline: formData.get("tagline") || "",
+    homepageBlurbHeading: formData.get("homepageBlurbHeading") || "",
+    homepageBlurbBody: formData.get("homepageBlurbBody") || "",
+    aboutContent: formData.get("aboutContent") || "",
   });
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Please check the settings form.");
 
@@ -38,6 +46,10 @@ export async function updateSettings(formData: FormData) {
       contact_email: parsed.data.contactEmail || null,
       address: parsed.data.address || null,
       phone: parsed.data.phone || null,
+      tagline: parsed.data.tagline || null,
+      homepage_blurb_heading: parsed.data.homepageBlurbHeading || null,
+      homepage_blurb_body: parsed.data.homepageBlurbBody || null,
+      about_content: parsed.data.aboutContent || null,
     })
     .eq("id", true);
   if (error) throw new Error("Could not save settings. Please try again.");
@@ -45,4 +57,5 @@ export async function updateSettings(formData: FormData) {
   revalidatePath("/", "layout");
   revalidatePath("/admin/settings");
   revalidatePath("/contact");
+  revalidatePath("/about");
 }
