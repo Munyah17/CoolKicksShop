@@ -4,7 +4,7 @@
 export const siteConfig = {
   brandName: "Got It",
   legalName: "Got It",
-  tagline: "Some people have good taste in life.",
+  tagline: "Some people have a better taste to life.",
   description:
     "Got It is Zimbabwe's online sneaker boutique — premium, hand-picked kicks with delivery across Zimbabwe.",
   instagramUrl: "https://www.instagram.com/gotitzim",

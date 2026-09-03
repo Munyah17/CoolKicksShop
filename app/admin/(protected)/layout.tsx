@@ -3,7 +3,7 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/admin";
 import { signOutAdmin } from "@/lib/admin/authActions";
 
-const navLinks = [
+const baseNavLinks = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/orders", label: "Orders" },
   { href: "/admin/products", label: "Products" },
@@ -13,9 +13,12 @@ const navLinks = [
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, isAdmin } = await requireAdmin();
+  const { user, isAdmin, role } = await requireAdmin();
 
   if (!user) redirect("/admin/login");
+
+  const navLinks =
+    role === "super_admin" ? [...baseNavLinks, { href: "/admin/users", label: "Users" }] : baseNavLinks;
 
   if (!isAdmin) {
     return (

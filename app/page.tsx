@@ -9,6 +9,7 @@ import {
 } from "@/lib/catalogue/queries";
 import { ProductCard } from "@/components/product/ProductCard";
 import { HeroSlider } from "@/components/home/HeroSlider";
+import { ProductCarousel } from "@/components/home/ProductCarousel";
 
 function categoryTitle(category: string): string {
   return category.replace(/(^|\s)\w/g, (c) => c.toUpperCase());
@@ -16,7 +17,7 @@ function categoryTitle(category: string): string {
 
 export default async function HomePage() {
   const [newArrivals, featured, heroSlides, topCategories] = await Promise.all([
-    getNewArrivals(4),
+    getNewArrivals(10),
     getFeaturedProducts(4),
     getActiveHeroSlides(),
     getTopCategories(2),
@@ -54,7 +55,17 @@ export default async function HomePage() {
       )}
 
       {newArrivals.length > 0 && (
-        <ProductSection title="New Arrivals" viewAllHref="/shop?sort=newest" products={newArrivals} />
+        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between">
+            <h2 className="text-xl font-semibold tracking-tight text-neutral-900">New Arrivals</h2>
+            <Link href="/shop?sort=newest" className="text-sm font-medium text-neutral-600 hover:text-neutral-900">
+              View all
+            </Link>
+          </div>
+          <div className="mt-6">
+            <ProductCarousel products={newArrivals} />
+          </div>
+        </section>
       )}
 
       {featured.length > 0 && (

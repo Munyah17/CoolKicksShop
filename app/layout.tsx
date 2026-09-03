@@ -6,6 +6,7 @@ import { CartProvider } from "@/lib/cart/context";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { FloatingWhatsAppButton } from "@/components/layout/FloatingWhatsAppButton";
 import "./globals.css";
 
 const inter = Inter({
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <SiteFooter />
           <CartDrawer />
         </CartProvider>
+        <FloatingWhatsAppButton />
       </body>
     </html>
   );

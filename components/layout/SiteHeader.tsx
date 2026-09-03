@@ -8,7 +8,6 @@ import { MobileMenu } from "./MobileMenu";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
-  { href: "/shop?sort=newest", label: "New Arrivals" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
