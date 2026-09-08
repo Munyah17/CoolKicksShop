@@ -87,3 +87,37 @@ export async function deleteHeroSlide(id: string) {
   revalidatePath("/");
   revalidatePath("/admin/hero-slides");
 }
+
+export interface UploadHeroSlideImageResult {
+  ok: boolean;
+  url?: string;
+  error?: string;
+}
+
+export async function uploadHeroSlideImage(formData: FormData): Promise<UploadHeroSlideImageResult> {
+  const { isAdmin } = await requireAdmin();
+  if (!isAdmin) return { ok: false, error: "Not authorized." };
+
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, error: "No file provided." };
+  }
+  if (!file.type.startsWith("image/")) {
+    return { ok: false, error: "Only image files are allowed." };
+  }
+
+  const admin = createAdminClient();
+  const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+  const path = `hero-${crypto.randomUUID()}.${ext}`;
+
+  const { error } = await admin.storage.from("hero-images").upload(path, file, {
+    contentType: file.type,
+    upsert: false,
+  });
+  if (error) {
+    return { ok: false, error: "Upload failed. Please try again." };
+  }
+
+  const { data } = admin.storage.from("hero-images").getPublicUrl(path);
+  return { ok: true, url: data.publicUrl };
+}

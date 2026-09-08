@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o /dev/null -w \"homepage: HTTP %{http_code}\\\\n\" http://localhost:6137/)",
+      "Bash(curl -s -o /dev/null -w \"shop: HTTP %{http_code}\\\\n\" http://localhost:6137/shop)",
+      "Bash(curl -s -o /dev/null -w \"admin login: HTTP %{http_code}\\\\n\" http://localhost:6137/admin/login)",
+      "Bash(curl -s http://localhost:6137/)",
+      "Bash(node _tmp_test_deferred_size.js)",
+      "Bash(node _tmp_debug_card_click.js)",
+      "Bash(taskkill //PID 31940 //F)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:6137/)",
+      "Bash(node _tmp_finish_size_test.js)",
+      "Bash(git commit -m ' *)",
+      "Bash(curl -s -o /dev/null -w \"shop: HTTP %{http_code}\\\\n\" https://cool-kicks-shop.vercel.app/shop)",
+      "Bash(curl -s -o /dev/null -w \"cart: HTTP %{http_code}\\\\n\" https://cool-kicks-shop.vercel.app/cart)",
+      "Bash(curl -s https://cool-kicks-shop.vercel.app/shop)"
+    ]
+  }
+}
