@@ -9,12 +9,13 @@ const nextConfig: NextConfig = {
       ? [{ protocol: "https", hostname: supabaseHostname, pathname: "/storage/v1/object/public/**" }]
       : [],
   },
-  // Default is 1MB, which rejects any real product photo straight out of a
-  // phone camera. 50MB matches Supabase Storage's own free-tier cap, so
-  // that's the practical ceiling either way.
+  // Default is 1MB, which rejects any real photo straight out of a phone
+  // camera. Keep this in sync with the MAX_SIZE check in the upload server
+  // actions (lib/admin/*Actions.ts) — if this is lower, the request is
+  // rejected by the framework before the action's own error message runs.
   experimental: {
     serverActions: {
-      bodySizeLimit: "50mb",
+      bodySizeLimit: "150mb",
     },
   },
 };
