@@ -105,6 +105,10 @@ export async function uploadHeroSlideImage(formData: FormData): Promise<UploadHe
   if (!file.type.startsWith("image/")) {
     return { ok: false, error: "Only image files are allowed." };
   }
+  const MAX_SIZE = 150 * 1024 * 1024; // 150MB
+  if (file.size > MAX_SIZE) {
+    return { ok: false, error: "File size exceeds 150MB limit." };
+  }
 
   const admin = createAdminClient();
   const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
@@ -115,7 +119,7 @@ export async function uploadHeroSlideImage(formData: FormData): Promise<UploadHe
     upsert: false,
   });
   if (error) {
-    return { ok: false, error: "Upload failed. Please try again." };
+    return { ok: false, error: `Upload failed: ${error.message}` };
   }
 
   const { data } = admin.storage.from("hero-images").getPublicUrl(path);
