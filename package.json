@@ -6,7 +6,8 @@
     "dev": "next dev -p 6137",
     "build": "next build",
     "start": "next start -p 6137",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:push": "node scripts/db-push.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",
