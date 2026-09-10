@@ -14,9 +14,10 @@ try {
   }
 } catch {}
 
-const token = process.env.VERCEL_TOKEN || env.VERCEL_TOKEN;
-const orgId = process.env.VERCEL_ORG_ID || env.VERCEL_ORG_ID;
-const projectId = process.env.VERCEL_PROJECT_ID || env.VERCEL_PROJECT_ID;
+// .env.local wins over any (possibly stale) ambient env vars.
+const token = env.VERCEL_TOKEN || process.env.VERCEL_TOKEN;
+const orgId = env.VERCEL_ORG_ID || process.env.VERCEL_ORG_ID;
+const projectId = env.VERCEL_PROJECT_ID || process.env.VERCEL_PROJECT_ID;
 if (!token || !orgId || !projectId) {
   console.error("Missing VERCEL_TOKEN / VERCEL_ORG_ID / VERCEL_PROJECT_ID in .env.local");
   process.exit(1);
@@ -29,6 +30,6 @@ if (noCache) args.push("--force");
 const r = spawnSync("npx", args, {
   stdio: "inherit",
   shell: process.platform === "win32",
-  env: { ...process.env, VERCEL_ORG_ID: orgId, VERCEL_PROJECT_ID: projectId },
+  env: { ...process.env, VERCEL_TOKEN: token, VERCEL_ORG_ID: orgId, VERCEL_PROJECT_ID: projectId },
 });
 process.exit(r.status ?? 1);
