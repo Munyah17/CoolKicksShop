@@ -5,6 +5,35 @@ import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+const LOGO_BUCKET = "logo-images";
+
+type AdminClient = ReturnType<typeof createAdminClient>;
+
+async function getCurrentLogoUrl(admin: AdminClient): Promise<string | null> {
+  const { data } = await admin.from("settings").select("logo_url").eq("id", true).maybeSingle<{ logo_url: string | null }>();
+  return data?.logo_url ?? null;
+}
+
+// Best-effort: if the URL points at a file we uploaded to our own storage
+// bucket, delete that file. URLs from anywhere else (e.g. an old Cloudinary
+// upload, or a hand-pasted link) are left alone -- there is nothing of ours
+// to remove.
+async function deleteLogoStorageObject(admin: AdminClient, url: string): Promise<void> {
+  const marker = `/storage/v1/object/public/${LOGO_BUCKET}/`;
+  const i = url.indexOf(marker);
+  if (i === -1) return;
+  const path = decodeURIComponent(url.slice(i + marker.length).split("?")[0]);
+  if (!path) return;
+  await admin.storage.from(LOGO_BUCKET).remove([path]);
+}
+
+function revalidateLogoSurfaces() {
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/settings");
+  revalidatePath("/contact");
+  revalidatePath("/about");
+}
+
 const settingsSchema = z.object({
   logoUrl: z.union([z.literal(""), z.string().trim().url()]),
   instagramUrl: z.union([z.literal(""), z.string().trim().url()]),
@@ -37,10 +66,18 @@ export async function updateSettings(formData: FormData) {
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Please check the settings form.");
 
   const admin = createAdminClient();
+
+  // If the logo changed, clean up the file the old URL pointed at (best effort).
+  const currentLogo = await getCurrentLogoUrl(admin);
+  const nextLogo = parsed.data.logoUrl || null;
+  if (currentLogo && currentLogo !== nextLogo) {
+    await deleteLogoStorageObject(admin, currentLogo);
+  }
+
   const { error } = await admin
     .from("settings")
     .update({
-      logo_url: parsed.data.logoUrl || null,
+      logo_url: nextLogo,
       instagram_url: parsed.data.instagramUrl || null,
       whatsapp_number: parsed.data.whatsappNumber || null,
       contact_email: parsed.data.contactEmail || null,
@@ -54,16 +91,35 @@ export async function updateSettings(formData: FormData) {
     .eq("id", true);
   if (error) throw new Error("Could not save settings. Please try again.");
 
-  revalidatePath("/", "layout");
-  revalidatePath("/admin/settings");
-  revalidatePath("/contact");
-  revalidatePath("/about");
+  revalidateLogoSurfaces();
 }
 
 export interface UploadLogoImageResult {
   ok: boolean;
   url?: string;
   error?: string;
+}
+
+export interface RemoveLogoImageResult {
+  ok: boolean;
+  error?: string;
+}
+
+// Clears the logo immediately (both the stored file and settings.logo_url),
+// independent of the main Save button. The header falls back to the monogram.
+export async function removeLogoImage(): Promise<RemoveLogoImageResult> {
+  const { isAdmin } = await requireAdmin();
+  if (!isAdmin) return { ok: false, error: "Not authorized." };
+
+  const admin = createAdminClient();
+  const current = await getCurrentLogoUrl(admin);
+  if (current) await deleteLogoStorageObject(admin, current);
+
+  const { error } = await admin.from("settings").update({ logo_url: null }).eq("id", true);
+  if (error) return { ok: false, error: "Could not remove the logo. Please try again." };
+
+  revalidateLogoSurfaces();
+  return { ok: true };
 }
 
 export async function uploadLogoImage(formData: FormData): Promise<UploadLogoImageResult> {

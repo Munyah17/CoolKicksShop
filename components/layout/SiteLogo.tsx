@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getSiteSettings } from "@/lib/catalogue/queries";
 import { siteConfig } from "@/lib/config";
 
@@ -12,12 +11,14 @@ export async function SiteLogo() {
   return (
     <Link href="/" aria-label={`${siteConfig.brandName} — Home`} className="flex shrink-0 items-center">
       {logoUrl ? (
-        <Image
+        // Plain <img>, not next/image: the logo URL can point at any host the
+        // admin uploaded to, which next/image would reject unless whitelisted.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
           src={logoUrl}
           alt={siteConfig.brandName}
           width={120}
           height={36}
-          priority
           className="h-9 w-auto object-contain"
         />
       ) : (
