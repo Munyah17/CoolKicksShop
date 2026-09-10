@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start -p 6137",
     "lint": "eslint",
-    "db:push": "node scripts/db-push.mjs"
+    "db:push": "node scripts/db-push.mjs",
+    "deploy": "node scripts/deploy.mjs",
+    "deploy:no-cache": "node scripts/deploy.mjs --no-cache"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",
