@@ -15,8 +15,8 @@ update products set category = 'Basketball' where slug = 'retro-jump-high';
 -- placeholders by the HeroSlider component until real photography is
 -- added via /admin/hero-slides).
 insert into hero_slides (headline, subheadline, cta_label, cta_href, display_order, active) values
-  ('New Drops, Every Week', 'A small, considered selection of sneakers -- not a warehouse dump.', 'Shop Now', '/shop', 0, true),
+  ('New Drops, Every Week', 'A small, considered selection of sneakers — not a warehouse dump.', 'Shop Now', '/shop', 0, true),
   ('Sneakers Done Right', 'Hand-picked pairs, honest pricing, real customer service.', 'Shop Sneakers', '/shop?category=Sneakers', 1, true),
   ('Built For The Run', 'Lightweight runners for everyday miles.', 'Shop Running', '/shop?category=Running', 2, true),
   ('Court Ready', 'High-tops built for the streets, not just the court.', 'Shop Basketball', '/shop?category=Basketball', 3, true),
-  ('Delivery Across Zimbabwe', 'Harare, Chitungwiza, Bulawayo and beyond -- or free store pickup.', 'Learn More', '/delivery', 4, true);
+  ('Delivery Across Zimbabwe', 'Harare, Chitungwiza, Bulawayo and beyond — or free store pickup.', 'Learn More', '/delivery', 4, true);
