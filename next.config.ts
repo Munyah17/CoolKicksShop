@@ -1,13 +1,16 @@
 import type { NextConfig } from "next";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseHostname = supabaseUrl ? new URL(supabaseUrl).hostname : undefined;
-
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: supabaseHostname
-      ? [{ protocol: "https", hostname: supabaseHostname, pathname: "/storage/v1/object/public/**" }]
-      : [],
+    // Hero slides, the logo, and product photos are admin-curated URLs that
+    // can come from a few places: our own Supabase Storage buckets (current),
+    // or Cloudinary (older slides seeded before the direct-upload feature).
+    // Anything not listed here makes next/image respond 400 and render a
+    // broken-image placeholder.
+    remotePatterns: [
+      { protocol: "https", hostname: "**.supabase.co", pathname: "/storage/v1/object/public/**" },
+      { protocol: "https", hostname: "res.cloudinary.com", pathname: "/**" },
+    ],
   },
   // Default is 1MB, which rejects any real photo straight out of a phone
   // camera. Keep this in sync with the MAX_SIZE check in the upload server

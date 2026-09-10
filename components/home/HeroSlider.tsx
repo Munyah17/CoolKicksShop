@@ -29,6 +29,9 @@ export function HeroSlider({ slides }: { slides: HeroSlideRow[] }) {
   const [active, setActive] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [paused, setPaused] = useState(false);
+  // If a slide's image URL 404s or is blocked, fall back to the gradient
+  // instead of showing a broken-image icon.
+  const [brokenIds, setBrokenIds] = useState<Set<string>>(() => new Set());
 
   useEffect(() => {
     if (slides.length <= 1 || paused) return;
@@ -61,7 +64,7 @@ export function HeroSlider({ slides }: { slides: HeroSlideRow[] }) {
             i === active ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
         >
-          {slide.image_url ? (
+          {slide.image_url && !brokenIds.has(slide.id) ? (
             <Image
               src={slide.image_url}
               alt={slide.headline ?? ""}
@@ -69,6 +72,13 @@ export function HeroSlider({ slides }: { slides: HeroSlideRow[] }) {
               priority={i === 0}
               sizes="100vw"
               className="object-cover"
+              onError={() =>
+                setBrokenIds((prev) => {
+                  const next = new Set(prev);
+                  next.add(slide.id);
+                  return next;
+                })
+              }
             />
           ) : (
             <div className="absolute inset-0" style={{ background: gradientFor(slide.id) }} />
