@@ -34,9 +34,11 @@ function revalidateLogoSurfaces() {
   revalidatePath("/about");
 }
 
+const emptyOrUrl = z.union([z.literal(""), z.string().trim().url()]);
+
 const settingsSchema = z.object({
-  logoUrl: z.union([z.literal(""), z.string().trim().url()]),
-  instagramUrl: z.union([z.literal(""), z.string().trim().url()]),
+  logoUrl: emptyOrUrl,
+  instagramUrl: emptyOrUrl,
   whatsappNumber: z.string().trim().max(20),
   contactEmail: z.union([z.literal(""), z.string().trim().email()]),
   address: z.string().trim().max(300),
@@ -47,9 +49,52 @@ const settingsSchema = z.object({
   aboutContent: z.string().trim().max(4000),
 });
 
-export async function updateSettings(formData: FormData) {
+type SettingsField = keyof z.infer<typeof settingsSchema>;
+
+const FIELD_LABELS: Record<SettingsField, string> = {
+  logoUrl: "Logo URL",
+  instagramUrl: "Instagram URL",
+  whatsappNumber: "WhatsApp number",
+  contactEmail: "Contact email",
+  address: "Address",
+  phone: "Phone",
+  tagline: "Tagline",
+  homepageBlurbHeading: "Homepage blurb heading",
+  homepageBlurbBody: "Homepage blurb body",
+  aboutContent: "About page content",
+};
+
+// Turn a raw zod issue into something an admin can act on.
+function friendlyIssue(field: SettingsField, issue: z.core.$ZodIssue): string {
+  const label = FIELD_LABELS[field] ?? field;
+  if (issue.code === "invalid_format" && "format" in issue) {
+    if (issue.format === "url") return `${label} must be a full web address starting with https://`;
+    if (issue.format === "email") return `${label} must be a valid email address, e.g. name@example.com`;
+  }
+  if (issue.code === "too_big" && "maximum" in issue) {
+    return `${label} is too long — keep it to ${issue.maximum} characters or fewer.`;
+  }
+  if (issue.code === "invalid_union") {
+    // emptyOrUrl: either blank or a valid URL
+    return `${label} must be a full web address starting with https:// (or left blank).`;
+  }
+  return `${label}: ${issue.message}`;
+}
+
+export interface SettingsFormState {
+  ok: boolean;
+  message: string;
+  errors?: Partial<Record<SettingsField, string>>;
+}
+
+export async function updateSettings(
+  _prevState: SettingsFormState | undefined,
+  formData: FormData,
+): Promise<SettingsFormState> {
   const { isAdmin } = await requireAdmin();
-  if (!isAdmin) throw new Error("Not authorized.");
+  if (!isAdmin) {
+    return { ok: false, message: "Your admin session has expired. Sign in again and retry." };
+  }
 
   const parsed = settingsSchema.safeParse({
     logoUrl: formData.get("logoUrl") || "",
@@ -63,7 +108,20 @@ export async function updateSettings(formData: FormData) {
     homepageBlurbBody: formData.get("homepageBlurbBody") || "",
     aboutContent: formData.get("aboutContent") || "",
   });
-  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Please check the settings form.");
+
+  if (!parsed.success) {
+    const errors: Partial<Record<SettingsField, string>> = {};
+    for (const issue of parsed.error.issues) {
+      const field = issue.path[0] as SettingsField | undefined;
+      if (field && !errors[field]) errors[field] = friendlyIssue(field, issue);
+    }
+    const count = Object.keys(errors).length;
+    return {
+      ok: false,
+      message: `Not saved — ${count} field${count === 1 ? "" : "s"} need${count === 1 ? "s" : ""} fixing. See the highlighted field${count === 1 ? "" : "s"} below.`,
+      errors,
+    };
+  }
 
   const admin = createAdminClient();
 
@@ -89,9 +147,12 @@ export async function updateSettings(formData: FormData) {
       about_content: parsed.data.aboutContent || null,
     })
     .eq("id", true);
-  if (error) throw new Error("Could not save settings. Please try again.");
+  if (error) {
+    return { ok: false, message: "Could not save — the database rejected the change. Please try again." };
+  }
 
   revalidateLogoSurfaces();
+  return { ok: true, message: "Settings saved." };
 }
 
 export interface UploadLogoImageResult {

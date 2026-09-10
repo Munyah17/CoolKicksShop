@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { removeLogoImage, updateSettings, uploadLogoImage } from "@/lib/admin/settingsActions";
 import type { SettingsRow } from "@/types/database";
 
@@ -8,12 +8,38 @@ interface SettingsFormProps {
   settings?: SettingsRow | null;
 }
 
+type FieldName =
+  | "logoUrl"
+  | "instagramUrl"
+  | "whatsappNumber"
+  | "contactEmail"
+  | "address"
+  | "phone"
+  | "tagline"
+  | "homepageBlurbHeading"
+  | "homepageBlurbBody"
+  | "aboutContent";
+
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null;
+  return (
+    <span className="mt-1 block text-xs font-medium text-red-600" role="alert">
+      {msg}
+    </span>
+  );
+}
+
 export function SettingsForm({ settings }: SettingsFormProps) {
+  const [state, formAction, pending] = useActionState(updateSettings, undefined);
   const [logoUrl, setLogoUrl] = useState(settings?.logo_url ?? "");
   const [uploading, setUploading] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const errors = state?.errors;
+  const errClass = (name: FieldName) =>
+    errors?.[name] ? " border-red-500 ring-1 ring-red-500 focus:border-red-500 focus:ring-red-500" : "";
 
   async function handleFileUpload(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -49,7 +75,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
   }
 
   return (
-    <form action={updateSettings} className="mt-6 space-y-6 border border-border bg-white p-5">
+    <form action={formAction} className="mt-6 space-y-6 border border-border bg-white p-5">
       <div>
         <h2 className="text-xs font-semibold uppercase tracking-widest text-muted">Logo</h2>
         <p className="mt-1 text-xs text-muted">
@@ -61,6 +87,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
 
         {logoUrl && (
           <div className="mt-4 flex items-center gap-4">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={logoUrl}
               alt="Current logo"
@@ -110,8 +137,10 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             name="instagramUrl"
             defaultValue={settings?.instagram_url ?? ""}
             placeholder="https://www.instagram.com/…"
-            className="input mt-1"
+            aria-invalid={Boolean(errors?.instagramUrl)}
+            className={`input mt-1${errClass("instagramUrl")}`}
           />
+          <FieldError msg={errors?.instagramUrl} />
         </label>
         <label className="mt-4 block">
           <span className="text-xs font-medium text-neutral-600">WhatsApp number</span>
@@ -119,8 +148,10 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             name="whatsappNumber"
             defaultValue={settings?.whatsapp_number ?? ""}
             placeholder="e.g. 263771234567 (no + or spaces)"
-            className="input mt-1"
+            aria-invalid={Boolean(errors?.whatsappNumber)}
+            className={`input mt-1${errClass("whatsappNumber")}`}
           />
+          <FieldError msg={errors?.whatsappNumber} />
         </label>
         <label className="mt-4 block">
           <span className="text-xs font-medium text-neutral-600">Contact email</span>
@@ -129,8 +160,10 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             name="contactEmail"
             defaultValue={settings?.contact_email ?? ""}
             placeholder="hello@example.com"
-            className="input mt-1"
+            aria-invalid={Boolean(errors?.contactEmail)}
+            className={`input mt-1${errClass("contactEmail")}`}
           />
+          <FieldError msg={errors?.contactEmail} />
         </label>
         <label className="mt-4 block">
           <span className="text-xs font-medium text-neutral-600">Phone</span>
@@ -138,8 +171,10 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             name="phone"
             defaultValue={settings?.phone ?? ""}
             placeholder="e.g. 0777 317 446"
-            className="input mt-1"
+            aria-invalid={Boolean(errors?.phone)}
+            className={`input mt-1${errClass("phone")}`}
           />
+          <FieldError msg={errors?.phone} />
         </label>
         <label className="mt-4 block">
           <span className="text-xs font-medium text-neutral-600">Address</span>
@@ -147,8 +182,10 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             name="address"
             defaultValue={settings?.address ?? ""}
             placeholder="e.g. 6 Trinity Close, Greendale, Harare"
-            className="input mt-1"
+            aria-invalid={Boolean(errors?.address)}
+            className={`input mt-1${errClass("address")}`}
           />
+          <FieldError msg={errors?.address} />
         </label>
       </div>
 
@@ -164,8 +201,10 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             name="tagline"
             defaultValue={settings?.tagline ?? ""}
             placeholder="Your tagline here"
-            className="input mt-1"
+            aria-invalid={Boolean(errors?.tagline)}
+            className={`input mt-1${errClass("tagline")}`}
           />
+          <FieldError msg={errors?.tagline} />
           <span className="mt-1 block text-xs text-muted">Shown in the footer and on the fallback hero.</span>
         </label>
 
@@ -175,8 +214,10 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             name="homepageBlurbHeading"
             defaultValue={settings?.homepage_blurb_heading ?? ""}
             placeholder="Hand-picked kicks, not a warehouse dump."
-            className="input mt-1"
+            aria-invalid={Boolean(errors?.homepageBlurbHeading)}
+            className={`input mt-1${errClass("homepageBlurbHeading")}`}
           />
+          <FieldError msg={errors?.homepageBlurbHeading} />
         </label>
         <label className="mt-4 block">
           <span className="text-xs font-medium text-neutral-600">Homepage blurb body</span>
@@ -185,8 +226,10 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             rows={3}
             defaultValue={settings?.homepage_blurb_body ?? ""}
             placeholder="Your blurb here"
-            className="input mt-1"
+            aria-invalid={Boolean(errors?.homepageBlurbBody)}
+            className={`input mt-1${errClass("homepageBlurbBody")}`}
           />
+          <FieldError msg={errors?.homepageBlurbBody} />
           <span className="mt-1 block text-xs text-muted">
             Shown in the section between the product grids and the footer.
           </span>
@@ -199,19 +242,36 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             rows={8}
             defaultValue={settings?.about_content ?? ""}
             placeholder="Separate paragraphs with a blank line."
-            className="input mt-1"
+            aria-invalid={Boolean(errors?.aboutContent)}
+            className={`input mt-1${errClass("aboutContent")}`}
           />
+          <FieldError msg={errors?.aboutContent} />
           <span className="mt-1 block text-xs text-muted">
             Replaces the whole /about page body. Separate paragraphs with a blank line.
           </span>
         </label>
       </div>
 
+      {state && (
+        <p
+          role="status"
+          aria-live="polite"
+          className={`rounded-md border px-3 py-2 text-sm ${
+            state.ok
+              ? "border-green-300 bg-green-50 text-green-800"
+              : "border-red-300 bg-red-50 text-red-700"
+          }`}
+        >
+          {state.message}
+        </p>
+      )}
+
       <button
         type="submit"
-        className="rounded-md bg-neutral-900 px-6 py-2.5 text-xs font-semibold uppercase tracking-widest text-white"
+        disabled={pending || uploading || removing}
+        className="rounded-md bg-neutral-900 px-6 py-2.5 text-xs font-semibold uppercase tracking-widest text-white disabled:opacity-50"
       >
-        Save
+        {pending ? "Saving…" : "Save"}
       </button>
     </form>
   );
