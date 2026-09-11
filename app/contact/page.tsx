@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description: `Get in touch with ${siteConfig.legalName}.`,
 };
 
+// No per-visitor data on this page -- static + ISR instead of rendering
+// fresh on every request.
+export const revalidate = 60;
+
 function instagramHandle(url: string): string {
   const match = url.match(/instagram\.com\/([^/?]+)/i);
   return match ? `@${match[1]}` : url;

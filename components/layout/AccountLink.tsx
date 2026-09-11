@@ -1,18 +1,41 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { requireAdmin } from "@/lib/auth/admin";
 import { UserIcon } from "@/components/ui/icons";
 
-// Admins sign in through the same Supabase Auth session as customers --
-// route them straight to /admin instead of the customer /account page,
-// which they'd otherwise never see a link to from here.
-export async function AccountLink() {
-  const { user, isAdmin } = await requireAdmin();
+interface AccountLinkState {
+  href: string;
+  label: string;
+}
 
-  const href = !user ? "/account/login" : isAdmin ? "/admin" : "/account";
-  const label = !user ? "Sign in" : isAdmin ? "Admin dashboard" : "Your account";
+// Correct for the overwhelming majority of page views (a signed-out guest)
+// on first paint, so there's no loading flicker for the common case. A
+// signed-in customer or admin gets swapped to the right destination a beat
+// after mount, once /api/auth/whoami resolves -- see that route for why
+// this isn't resolved server-side here anymore.
+const SIGNED_OUT: AccountLinkState = { href: "/account/login", label: "Sign in" };
+
+export function AccountLink() {
+  const [state, setState] = useState<AccountLinkState>(SIGNED_OUT);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/auth/whoami", { cache: "no-store" })
+      .then((res) => (res.ok ? (res.json() as Promise<AccountLinkState>) : null))
+      .then((data) => {
+        if (!cancelled && data) setState(data);
+      })
+      .catch(() => {
+        // Network hiccup: leave the sign-in link, which is always safe.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
-    <Link href={href} aria-label={label} className="flex h-9 w-9 items-center justify-center text-neutral-900">
+    <Link href={state.href} aria-label={state.label} className="flex h-9 w-9 items-center justify-center text-neutral-900">
       <UserIcon />
     </Link>
   );

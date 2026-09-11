@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description: `Delivery areas and fees for ${siteConfig.legalName}.`,
 };
 
+// No per-visitor data on this page -- static + ISR instead of rendering
+// fresh on every request.
+export const revalidate = 60;
+
 export default async function DeliveryPage() {
   const options = await getActiveDeliveryOptions();
   const deliveryAreas = options.filter((o) => o.type === "delivery");

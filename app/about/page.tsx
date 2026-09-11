@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   description: `About ${siteConfig.legalName}.`,
 };
 
+// No per-visitor data on this page (the header's auth check now happens
+// client-side, see components/layout/AccountLink.tsx) -- static + ISR
+// instead of rendering fresh on every request.
+export const revalidate = 60;
+
 export default async function AboutPage() {
   const settings = await getSiteSettings();
   const customParagraphs = settings?.about_content?.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);

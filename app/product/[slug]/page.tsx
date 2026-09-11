@@ -2,12 +2,29 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProductBySlug, getRelatedProducts, primaryImage, isInStock } from "@/lib/catalogue/queries";
+import {
+  getAllActiveProducts,
+  getProductBySlug,
+  getRelatedProducts,
+  primaryImage,
+  isInStock,
+} from "@/lib/catalogue/queries";
 import { formatMoney } from "@/lib/money";
 import { siteConfig, siteUrl } from "@/lib/config";
 import { ProductImagePlaceholder } from "@/components/product/ProductImagePlaceholder";
 import { AddToCartForm } from "@/components/product/AddToCartForm";
 import { ProductCard } from "@/components/product/ProductCard";
+
+// No per-visitor data on this page -- static + ISR instead of rendering
+// fresh on every request. Every active product is prerendered at build
+// time below; a new product added later still renders on its first visit
+// and is cached from then on (dynamicParams defaults to true).
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const products = await getAllActiveProducts();
+  return products.map((product) => ({ slug: product.slug }));
+}
 
 export async function generateMetadata({
   params,

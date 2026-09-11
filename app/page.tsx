@@ -12,6 +12,10 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { HeroSlider } from "@/components/home/HeroSlider";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
 
+// No per-visitor data on this page -- static + ISR instead of rendering
+// fresh on every request.
+export const revalidate = 60;
+
 function categoryTitle(category: string): string {
   return category.replace(/(^|\s)\w/g, (c) => c.toUpperCase());
 }
