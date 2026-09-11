@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -46,6 +46,7 @@ export async function createHeroSlide(formData: FormData) {
   });
   if (error) throw new Error("Could not create slide. Please try again.");
 
+  updateTag("hero-slides");
   revalidatePath("/");
   revalidatePath("/admin/hero-slides");
 }
@@ -72,6 +73,7 @@ export async function updateHeroSlide(id: string, formData: FormData) {
     .eq("id", id);
   if (error) throw new Error("Could not save slide. Please try again.");
 
+  updateTag("hero-slides");
   revalidatePath("/");
   revalidatePath("/admin/hero-slides");
 }
@@ -84,6 +86,7 @@ export async function deleteHeroSlide(id: string) {
   const { error } = await admin.from("hero_slides").delete().eq("id", id);
   if (error) throw new Error("Could not delete slide. Please try again.");
 
+  updateTag("hero-slides");
   revalidatePath("/");
   revalidatePath("/admin/hero-slides");
 }

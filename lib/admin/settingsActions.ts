@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -28,6 +28,7 @@ async function deleteLogoStorageObject(admin: AdminClient, url: string): Promise
 }
 
 function revalidateLogoSurfaces() {
+  updateTag("settings");
   revalidatePath("/", "layout");
   revalidatePath("/admin/settings");
   revalidatePath("/contact");

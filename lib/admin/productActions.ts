@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { productFormSchema } from "@/lib/validation/product";
@@ -83,6 +83,7 @@ export async function saveProduct(formData: FormData): Promise<SaveProductResult
   await syncSizes(productId, data.sizes);
   await syncImages(productId, data.images);
 
+  updateTag("products");
   revalidatePath("/admin/products");
   revalidatePath(`/admin/products/${productId}`);
   revalidatePath("/shop");
@@ -184,6 +185,7 @@ export async function setProductActive(id: string, active: boolean) {
   const { error } = await admin.from("products").update({ active }).eq("id", id);
   if (error) throw new Error("Could not update product status.");
 
+  updateTag("products");
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");
@@ -200,6 +202,7 @@ export async function deleteProduct(id: string) {
   const { error } = await admin.from("products").delete().eq("id", id);
   if (error) throw new Error("Could not delete product.");
 
+  updateTag("products");
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");

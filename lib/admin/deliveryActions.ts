@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -35,8 +35,10 @@ export async function createDeliveryOption(formData: FormData) {
     sort_order: parsed.data.sortOrder,
   });
 
+  updateTag("delivery-options");
   revalidatePath("/admin/delivery");
   revalidatePath("/checkout");
+  revalidatePath("/delivery");
 }
 
 export async function updateDeliveryOption(id: string, formData: FormData) {
@@ -64,6 +66,8 @@ export async function updateDeliveryOption(id: string, formData: FormData) {
     })
     .eq("id", id);
 
+  updateTag("delivery-options");
   revalidatePath("/admin/delivery");
   revalidatePath("/checkout");
+  revalidatePath("/delivery");
 }
